@@ -1,0 +1,28 @@
+query GetEvents($input: GetPublicEventListInput!){
+    getPublicEvents(options: $input) {
+        items {
+            id
+            title
+            priceRangeStart
+            currencyKey
+            countryKey
+            organizer {
+                companyName
+            }
+            posters {
+                id
+                sizes {
+                    small {
+                        location
+                    }
+                }
+            }
+            performances {
+                title
+                startDate
+                endDate
+                timezone
+            }
+        }
+    }
+}

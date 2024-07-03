@@ -1,0 +1,5972 @@
+type EventPoster {
+  event: Event!
+  media: Media!
+  order: Int!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+}
+
+# `Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+scalar Timestamp
+
+type EventProduct {
+  event: Event!
+  product: Product!
+  order: Int!
+  quantity: Int
+  maxPerOrder: Int
+  maxPerTicket: Int
+  inventoryManagement: Boolean
+  published: Boolean
+  salesStart: Timestamp
+  salesEnd: Timestamp
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  countSold: Int!
+  countTotal: Int
+}
+
+type Attendee {
+  id: ID!
+  email: String
+  firstName: String
+  lastName: String
+  middleName: String
+  phone: String
+  createdAt: Timestamp!
+  updatedAt: Timestamp
+}
+
+type EventInvoiceSubtotal {
+  gross: Float
+  productGross: Float
+  paymentFee: Float
+  minimumGuaranteeFee: Float
+  minimumGuaranteeFeeDue: Float
+  serviceFee: Float
+  serviceFeeOfFreePrice: Float
+  refunded: Float
+  IPRHFee: Float
+  vouchersTotal: Float
+  discountsTotal: Float
+  voucherFee: Float
+  voucherFeeDeducted: Float
+  net: Float
+  vouchersSum: Float
+  productRefunded: Float
+}
+
+type EventInvoiceTicketTypeDetails {
+  ticketType: TicketType!
+  quantity: Int!
+  quantityAttendees: Int!
+  subtotal: EventInvoiceSubtotal!
+}
+
+type EventInvoiceProductDetails {
+  product: Product!
+  quantity: Int!
+  subtotal: EventInvoiceSubtotal!
+}
+
+type EventInvoiceDiscountGroup {
+  total: Float!
+  quantity: Float!
+  amount: Float!
+  isPercent: Boolean
+}
+
+type EventInvoiceVoucher {
+  issued: Float!
+  used: Float!
+  prevFee: Float!
+  fee: Float!
+}
+
+type EventInvoiceVoucherIssued {
+  issued: Float!
+  quantity: Float!
+  fee: Float!
+}
+
+type EventInvoicePerformanceDetails {
+  performance: Performance!
+  quantityAttendees: Int!
+  minimumGuaranteeFee: Int!
+  minimumGuaranteeFeeDue: Int!
+  voucherFee: Float!
+  voucherFeeDeducted: Float!
+  discounts: [EventInvoiceDiscountGroup!]!
+  vouchers: [EventInvoiceVoucher!]!
+  vouchersIssued: [EventInvoiceVoucherIssued!]!
+  ticketTypeDetails: [EventInvoiceTicketTypeDetails!]!
+  productDetails: [EventInvoiceProductDetails!]!
+  productSubtotal: EventInvoiceSubtotal!
+  ticketSubtotal: EventInvoiceSubtotal!
+}
+
+type EventInvoiceTotal {
+  # The total, including discounts, taxes, shipping, and other fees
+  grandTotal: Float!
+
+  # Subtotal without taxes
+  subtotalExcludingTax: Float!
+
+  # Subtotal with taxes
+  subtotalIncludingTax: Float!
+
+  # Subtotal with any discounts applied, but not taxes
+  subtotalWithDiscountExcludingTax: Float!
+
+  # Subtotal by products
+  subtotalProducts: Float!
+
+  # Subtotal by tickets
+  subtotalTickets: Float!
+}
+
+type EventInvoiceDetail {
+  performanceDetails: [EventInvoicePerformanceDetails!]!
+  subtotal: EventInvoiceSubtotal!
+  total: EventInvoiceTotal!
+  quantityAttendees: Int!
+}
+
+type Transaction {
+  cardBrand: String
+  cardLast4: String
+  totalPaid: Float!
+  refunded: Float!
+  currencyKey: CurrencyCode!
+  status: PaymentStatus!
+  createdAt: Timestamp
+  updatedAt: Timestamp
+}
+
+# ISO 4217 currency code
+enum CurrencyCode {
+  AED
+  AFN
+  ALL
+  AMD
+  ANG
+  AOA
+  ARS
+  AUD
+  AWG
+  AZN
+  BAM
+  BBD
+  BDT
+  BGN
+  BHD
+  BIF
+  BMD
+  BND
+  BOB
+  BRL
+  BSD
+  BTN
+  BWP
+  BYN
+  BZD
+  CAD
+  CHE
+  CHW
+  CLP
+  CNY
+  COP
+  CRC
+  CUC
+  CUP
+  CVE
+  CZK
+  DJF
+  DKK
+  DOP
+  DZD
+  EGP
+  ERN
+  ETB
+  EUR
+  FJD
+  FKP
+  GBP
+  GEL
+  GHS
+  GIP
+  GMD
+  GNF
+  GTQ
+  GYD
+  HKD
+  HNL
+  HRK
+  HTG
+  HUF
+  IDR
+  ILS
+  INR
+  IQD
+  IRR
+  ISK
+  JMD
+  JOD
+  JPY
+  KES
+  KGS
+  KHR
+  KMF
+  KPW
+  KRW
+  KWD
+  KYD
+  KZT
+  LAK
+  LBP
+  LKR
+  LRD
+  LSL
+  LYD
+  MAD
+  MDL
+  MGA
+  MKD
+  MMK
+  MNT
+  MOP
+  MRU
+  MUR
+  MVR
+  MWK
+  MXN
+  MYR
+  MZN
+  NAD
+  NGN
+  NIO
+  NOK
+  NPR
+  NZD
+  OMR
+  PAB
+  PEN
+  PGK
+  PHP
+  PKR
+  PLN
+  PYG
+  QAR
+  RON
+  RSD
+  RUB
+  RWF
+  SAR
+  SBD
+  SCR
+  SDG
+  SEK
+  SGD
+  SHP
+  SLL
+  SOS
+  SRD
+  SSP
+  STN
+  SVC
+  SYP
+  SZL
+  THB
+  TJS
+  TMT
+  TND
+  TOP
+  TRY
+  TTD
+  TWD
+  TZS
+  UAH
+  UGX
+  USD
+  UYU
+  UZS
+  VES
+  VND
+  VUV
+  WST
+  XAF
+  XCD
+  XOF
+  XPF
+  YER
+  ZAR
+  ZMW
+  ZWL
+}
+
+# Payment Statuses
+enum PaymentStatus {
+  CREATED
+  REFUNDED
+  REFUND_PENDING
+  SUCCEEDED
+  PAYMENT_FAILED
+  PROCESSED
+}
+
+type Invoice {
+  id: ID!
+  user: User!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  type: InvoiceType!
+  status: InvoiceStatuses!
+  referenceNumber: String!
+  event: Event
+  eventId: ID
+  ticketsAmount: Float
+  productsAmount: Float
+  totalAmount: Float
+  currencyKey: CurrencyCode!
+  paymentServiceFee: Float
+  document: Media
+  invoiceDetails: EventInvoiceDetail
+  transactions: [Transaction!]
+}
+
+enum InvoiceType {
+  EVENT_SUMMARY_INVOICE
+  TICKETS_INVOICE
+}
+
+enum InvoiceStatuses {
+  PAID
+  UNPAID
+  PROCESSED
+  CANCELED
+}
+
+type TicketProduct {
+  id: ID!
+  product: Product!
+  quantity: Int!
+  redeem: Int!
+  title: String!
+  image: Media
+  description: String
+  price: Float!
+  fee: Float
+  paymentCharge: Float
+  createdAt: Timestamp!
+  updatedAt: Timestamp
+  voucherId: Int
+  voucher: Discount
+  voucherUsageId: Int
+  voucherUsage: DiscountUsage
+}
+
+# Discounts or vouchers
+type Discount {
+  id: ID!
+  code: String!
+  status: DiscountStatus!
+  type: DiscountType!
+  assignedCustomerId: Int
+  assignedCustomer: User
+  usages: [DiscountUsage!]
+  maxUsages: Int
+  validFrom: Timestamp
+  validTo: Timestamp
+  currency: CurrencyCode!
+  discountInPercent: Boolean!
+  discountAmount: Float!
+  discountMax: Float
+  refundFromOrderId: Int
+  feeCollected: Float!
+  forEventId: Int
+  forEvent: Event
+  createdAt: Timestamp!
+  updatedAt: Timestamp
+  usageCounts: DiscountUsageCounts
+}
+
+enum DiscountStatus {
+  Issued
+  Applied
+}
+
+enum DiscountType {
+  Discount
+  Voucher
+}
+
+# Information about the application of a discount
+type DiscountUsage {
+  id: ID!
+  discountId: Int
+  discount: Discount
+  customerId: Int!
+  customer: User!
+  amount: Float!
+  amountFlat: Float
+  amountPercent: Float
+  amountMax: Float
+  createdAt: Timestamp!
+  updatedAt: Timestamp
+  feeCollected: Float!
+  isVoucher: Boolean
+}
+
+type Order {
+  user: User!
+  ticketsPrice: Float!
+  serviceFee: Float
+  feeDeducted: Float!
+  totalPrice: Float!
+  currencyKey: CurrencyCode!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  discount: Float
+  discountPrice: Float!
+  organizerReceives: Float!
+  status: OrderStatus!
+  uuid: String!
+  paymentServiceFee: Float!
+  invoice: Invoice
+  attendee: Attendee!
+  orderItems: [OrderItem!]!
+  tickets: [Ticket!]!
+  discounts: [DiscountUsage!]
+  discountsIssued: [Discount!]
+  discountsIssuedUsed: [DiscountUsage!]
+}
+
+# Order Status
+enum OrderStatus {
+  CREATED
+  ARRANGING_PAYMENT
+  PAYMENT_AUTHORIZED
+  REFUNDED
+  REFUND_FAILED
+  MANUAL_COMPLETED
+  REFUND_PENDING
+  REJECTED
+  COMPLETED
+  CANCELLED
+  PARTIALLY_REFUNDED_WITH_VOUCHER
+  REFUNDED_WITH_VOUCHER
+}
+
+type OrderItemProduct {
+  id: ID!
+  product: Product!
+  quantity: Int!
+  title: String!
+  image: Media
+  description: String
+  price: Float!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+}
+
+type EventCoupon {
+  id: ID!
+  title: String
+  code: ID!
+  event: Event!
+  quantity: Int
+  validFrom: Timestamp
+  validTo: Timestamp
+  type: EventCouponType!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  ticketTypes: [TicketType!]!
+  orderItems: [OrderItem!]!
+  canEdit: Boolean!
+  redeemed: Int!
+}
+
+enum EventCouponType {
+  ALLOW_TICKET_TYPE_SALE
+}
+
+type OrderItem {
+  id: ID!
+  order: Order!
+  quantity: Float!
+  price: Float!
+  fee: Float!
+  currencyKey: CurrencyCode!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  discount: Float!
+  discountPrice: Float!
+  ticketType: TicketType!
+  performance: Performance!
+  event: Event!
+  ticketTypeId: Int!
+  performanceId: Int!
+  ticketTypePerformanceId: Int
+  orderId: Int!
+  orderItemProducts: [OrderItemProduct!]
+  couponId: ID
+  coupon: EventCoupon
+}
+
+type TicketTypePerformance {
+  id: ID!
+  organizerId: Int!
+  eventId: Int!
+  performance: Performance!
+  performanceId: ID!
+  ticketTypeId: ID!
+  price: Float
+  totalQuantity: Float
+  minPerOrder: Int
+  maxPerOrder: Int
+  createdAt: Timestamp
+  updatedAt: Timestamp
+}
+
+type EventMovieAudio {
+  id: ID!
+  user: User!
+  media: Media!
+  title: String
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  language: LanguageCode!
+  original: Boolean!
+  ticketTypes: [TicketType!]!
+  canEdit: Boolean!
+  canRemove: Boolean!
+}
+
+# Language Codes
+enum LanguageCode {
+  AA
+  AB
+  AF
+  AK
+  ALS
+  AM
+  AN
+  ANG
+  AR
+  ARC
+  ARZ
+  AS
+  AST
+  AV
+  AWA
+  AY
+  AZ
+  BA
+  BAR
+  BAT_SMG
+  BCL
+  BE
+  BER
+  BG
+  BH
+  BI
+  BM
+  BN
+  BO
+  BPY
+  BR
+  BRX
+  BS
+  BUG
+  BXR
+  CA
+  CDO
+  CE
+  CEB
+  CH
+  CHO
+  CHR
+  CHY
+  CKB
+  CO
+  CR
+  CRN
+  CS
+  CSB
+  CU
+  CV
+  CY
+  DA
+  DE
+  DIQ
+  DSB
+  DV
+  DZ
+  EE
+  EL
+  EN
+  EN_SG
+  EO
+  ES
+  ET
+  EU
+  EXT
+  FA
+  FF
+  FI
+  FIU_VRO
+  FJ
+  FO
+  FR
+  FRP
+  FUR
+  FY
+  GA
+  GAN
+  GBM
+  GD
+  GIL
+  GL
+  GN
+  GOT
+  GU
+  GV
+  HA
+  HAK
+  HAW
+  HE
+  HI
+  HO
+  HR
+  HT
+  HU
+  HY
+  HZ
+  IA
+  ID
+  IE
+  IG
+  II
+  IK
+  ILO
+  INH
+  IO
+  IS
+  IT
+  IU
+  JA
+  JBO
+  JV
+  KA
+  KG
+  KI
+  KJ
+  KK
+  KL
+  KM
+  KN
+  KHW
+  KO
+  KR
+  KS
+  KSH
+  KU
+  KV
+  KW
+  KY
+  LA
+  LAD
+  LAN
+  LB
+  LG
+  LI
+  LIJ
+  LMO
+  LN
+  LO
+  LZZ
+  LT
+  LV
+  MAP_BMS
+  MG
+  MAN
+  MH
+  MI
+  MIN
+  MK
+  ML
+  MN
+  MO
+  MR
+  MRH
+  MS
+  MT
+  MUS
+  MWL
+  MY
+  NA
+  NAH
+  NAP
+  ND
+  NDS
+  NDS_NL
+  NE
+  NEW
+  NG
+  NL
+  NN
+  NO
+  NR
+  NSO
+  NRM
+  NV
+  NY
+  OC
+  OJ
+  OM
+  OR
+  OS
+  PA
+  PAG
+  PAM
+  PAP
+  PDC
+  PI
+  PIH
+  PL
+  PMS
+  PS
+  PT
+  QU
+  RM
+  RMY
+  RN
+  RO
+  ROA_RUP
+  RU
+  RW
+  SA
+  SC
+  SCN
+  SCO
+  SD
+  SE
+  SG
+  SH
+  SI
+  SK
+  SL
+  SM
+  SN
+  SO
+  SQ
+  SR
+  SS
+  ST
+  SU
+  SV
+  SW
+  TA
+  TE
+  TET
+  TG
+  TH
+  TI
+  TK
+  TL
+  TLH
+  TN
+  TO
+  TPI
+  TR
+  TS
+  TT
+  TUM
+  TW
+  TY
+  UDM
+  UG
+  UK
+  UR
+  UZ
+  UZ_AF
+  VE
+  VI
+  VEC
+  VLS
+  VO
+  WA
+  WAR
+  WO
+  XAL
+  XH
+  XMF
+  YI
+  YO
+  ZA
+  ZG
+  ZH
+  ZU
+}
+
+type TransferredTicket {
+  ticketType: TicketType!
+  ticketId: ID!
+  productCount: Int!
+  receiverUserId: ID
+  status: TicketTransferStatus!
+}
+
+enum TicketTransferStatus {
+  NONE
+  SEND
+  RECEIVED
+  DECLINED
+}
+
+type TicketTransferPerformanceGroup {
+  id: ID!
+  event: Event!
+  startDate: Timestamp!
+  endDate: Timestamp
+  timezone: String
+  createdAt: Timestamp!
+  updatedAt: Timestamp
+  title: String
+  transferredTickets: [TransferredTicket!]!
+}
+
+type TicketTransfer {
+  id: ID!
+  uuid: ID!
+  event: Event!
+  eventId: ID!
+  deeplink: String
+  performance: Performance!
+  ticketType: TicketType
+  ticketTransferPerformanceGroups: TicketTransferPerformanceGroup!
+  performanceId: ID!
+  ticketTypeId: ID
+  redeemedQuantity: Int!
+  ticketQuantity: Int!
+  idDistributing: Boolean!
+  sender: User
+  receiver: User @deprecated(reason: "Use sender instead")
+  status: TicketTransferStatus!
+  createdAt: Timestamp!
+  updatedAt: Timestamp
+}
+
+type TicketType {
+  id: ID!
+  event: Event!
+  eventId: Int!
+  title: String!
+  description: String
+  allowPreprint: Boolean!
+  isHidden: Boolean!
+  assignToAllPerformance: Boolean!
+  price: Float!
+  sorting: Int!
+  totalQuantity: Int!
+  minPerOrder: Int
+  maxPerOrder: Int
+  isExpirationEnabled: Boolean!
+  expirationTimeHours: Int
+  minSpendSumPerOrder: Float
+  minSpendSumPerTicket: Float
+  salesStart: Timestamp
+  salesEnd: Timestamp
+  createdAt: Timestamp!
+  updatedAt: Timestamp
+  ticketTypePerformances: [TicketTypePerformance!]
+  eventMovieAudios: [EventMovieAudio!]
+  orderItems: [OrderItem!]
+  cartItems: [CartItem!]
+  canEdit: Boolean!
+  countSold: Int!
+  ticketSoldPerPerformance: [TicketCountSoldPerPerformance!]!
+  countTotal: Int!
+  organizerId: ID!
+}
+
+type TicketScan {
+  id: ID!
+  event: Event!
+  organizer: User!
+  ticket: Ticket!
+  performanceId: ID!
+  scanType: TicketScanType!
+  status: TicketScanStatus!
+  createdAt: Timestamp!
+}
+
+enum TicketScanType {
+  SCAN_IN
+  SCAN_OUT
+}
+
+enum TicketScanStatus {
+  VALID
+  EXITED
+  ALREADY_EXITED
+  ALREADY_ENTERED
+  INVALID_TICKET
+  INVALID_TICKET_ANOTHER_EVENT
+  NOT_ENTERED_YET
+  ACCESS_RESTRICTION
+}
+
+type DeviceInfoMetadata {
+  device: String
+  manufacturerName: String
+  board: String
+  hardware: String
+  serialNo: String
+  os: String
+  osVersion: String
+  osFingerPrint: String
+}
+
+type TicketFeedback {
+  id: ID!
+  event: Event!
+  eventId: Int!
+  organizer: User!
+  organizerId: Int!
+  rating: Float!
+  ratingSync: Int!
+  comment: String
+  deviceInfoMetadata: DeviceInfoMetadata
+  user: User!
+  createdAt: Timestamp!
+}
+
+type Ticket {
+  id: ID!
+  code: ID!
+  event: Event!
+  eventId: Int!
+  attendeeId: Int!
+  orderItemId: Int!
+  orderId: Int!
+  ticketTypeId: Int!
+  performanceId: Int!
+  ticketType: TicketType!
+  performance: Performance!
+  user: User!
+  organizerId: ID!
+  status: String
+  startDate: Timestamp
+  endDate: Timestamp
+  createdAt: Timestamp!
+  ticketPrice: Float!
+  fee: Float
+  totalFee: Float
+  totalPrice: Float!
+  paymentCharge: Float
+  currencyKey: CurrencyCode
+  attendee: Attendee
+  order: Order!
+  url: String
+  ticketScans: [TicketScan!]
+  ticketProducts: [TicketProduct!]
+  expirationTime: Timestamp
+  lastScan: Timestamp
+  isJoined: Boolean
+  isRTCEnabled: Boolean
+
+  # The event audio playing started without sync service(a heartbeat)
+  isNonAudioSynced: Boolean!
+  voucherId: Int
+  voucher: Discount
+  voucherUsageId: Int
+  voucherUsage: DiscountUsage
+  isGroup: Boolean!
+  groupProductCount: Int!
+  groupTicketCount: Int!
+  audioTracks: [EventMovieAudio!]!
+  chapterTimecodes: [ChapterTimecodes!]
+  playlist: EventMoviePlaylist
+  syncToken: String!
+  drmToken: String!
+  drmHttpRequestHeader: String
+  feedbackAllow: Boolean!
+  movieSourceType: EventMovieSourceType
+}
+
+enum EventMovieSourceType {
+  USER_SOURCE
+  MOVIE_GALLERY
+  PLAYLIST
+}
+
+type Venue {
+  id: ID!
+  title: String!
+  countryKey: CountryCode!
+  address: String
+  address2: String
+  city: String
+  state: String
+  zipcode: String
+  latitude: Float
+  longitude: Float
+  capacity: Int
+  googleLink: String
+  geoLocation: String
+  account: Account
+  events: [Event!]!
+  eventsCount: Int!
+}
+
+# Country Codes ISO 3166
+enum CountryCode {
+  AA
+  AF
+  AX
+  AL
+  DZ
+  AS
+  AD
+  AO
+  AI
+  AQ
+  AG
+  AR
+  AM
+  AW
+  AU
+  AT
+  AZ
+  BS
+  BH
+  BD
+  BB
+  BY
+  BE
+  BZ
+  BJ
+  BM
+  BT
+  BO
+  BA
+  BW
+  BV
+  BR
+  IO
+  BN
+  BG
+  BF
+  BI
+  KH
+  CM
+  CA
+  CV
+  KY
+  CF
+  TD
+  CL
+  CN
+  CX
+  CC
+  CO
+  KM
+  CG
+  CD
+  CK
+  CR
+  CI
+  HR
+  CU
+  CY
+  CZ
+  DK
+  DJ
+  DM
+  DO
+  EC
+  EG
+  SV
+  GQ
+  ER
+  EE
+  ET
+  FK
+  FO
+  FJ
+  FI
+  FR
+  GF
+  PF
+  TF
+  GA
+  GM
+  GE
+  DE
+  GH
+  GI
+  GR
+  GL
+  GD
+  GP
+  GU
+  GT
+  GG
+  GN
+  GW
+  GY
+  HT
+  HM
+  VA
+  HN
+  HK
+  HU
+  IS
+  IN
+  ID
+  IR
+  IQ
+  IE
+  IM
+  IL
+  IT
+  JM
+  JP
+  JE
+  JO
+  KZ
+  KE
+  KI
+  KR
+  KW
+  KG
+  LA
+  LV
+  LB
+  LS
+  LR
+  LY
+  LI
+  LT
+  LU
+  MO
+  MK
+  MG
+  MW
+  MY
+  MV
+  ML
+  MT
+  MH
+  MQ
+  MR
+  MU
+  YT
+  MX
+  FM
+  MD
+  MC
+  MN
+  ME
+  MS
+  MA
+  MZ
+  MM
+  NA
+  NR
+  NP
+  NL
+  AN
+  NC
+  NZ
+  NI
+  NE
+  NG
+  NU
+  NF
+  MP
+  NO
+  OM
+  PK
+  PW
+  PS
+  PA
+  PG
+  PY
+  PE
+  PH
+  PN
+  PL
+  PT
+  PR
+  QA
+  RE
+  RO
+  RU
+  RW
+  BL
+  SH
+  KN
+  KP
+  LC
+  MF
+  PM
+  VC
+  WS
+  SM
+  ST
+  SA
+  SN
+  RS
+  SC
+  SL
+  SG
+  SK
+  SI
+  SB
+  SO
+  ZA
+  GS
+  ES
+  LK
+  SD
+  SR
+  SJ
+  SZ
+  SE
+  CH
+  SY
+  TW
+  TJ
+  TZ
+  TH
+  TL
+  TG
+  TK
+  TO
+  TT
+  TN
+  TR
+  TM
+  TC
+  TV
+  UG
+  UA
+  AE
+  GB
+  US
+  UM
+  UY
+  UZ
+  VU
+  VE
+  VN
+  VG
+  VI
+  WF
+  EH
+  YE
+  ZM
+  ZW
+  XK
+}
+
+type AccessCodeApp {
+  application: CinewavApplication!
+}
+
+# Cinewav Access Code applications
+enum CinewavApplication {
+  CINEWAV_PLAYER
+  CINEWAV_SCANNER
+  CINEWAV_ORGANIZER
+  CINEWAV_MOBILE
+}
+
+type AccessCode {
+  id: ID!
+  code: ID!
+  event: Event!
+  organizer: User!
+  account: Account!
+  assignToAllPerformance: Boolean!
+  performances: [AccessCodePerformance!]
+  applications: [AccessCodeApp!]!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+}
+
+type AccessCodePerformance {
+  performance: Performance
+}
+
+type SocialMetadata {
+  facebook: String
+  instagram: String
+}
+
+type OrganizerEntity {
+  id: ID!
+  title: String!
+  description: String
+  createBy: User!
+  email: String!
+  phone: String
+  logo: String
+  city: String
+  state: String
+  zipcode: String
+  address: String
+  address2: String
+  countryKey: CountryCode!
+  disabled: Boolean
+  socialMetadata: SocialMetadata
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+}
+
+type Performance {
+  id: ID!
+  event: Event!
+  startDate: Timestamp!
+  endDate: Timestamp
+  timezone: String
+  createdAt: Timestamp!
+  updatedAt: Timestamp
+  title: String
+  deeplink: String
+  workflowStatus: PerformanceWorkflowStatuses!
+  venue: Venue @deprecated(reason: "Migrate to v1.8.0")
+  cartItems: [CartItem!]
+  canEdit: Boolean!
+  moviePlaylist: EventMoviePlaylist
+  canRemove: Boolean!
+  syncToken: String!
+  drmToken: String
+  drmHttpRequestHeader: String
+  movieDRMHttpRequestHeaders: [MovieDrmHttpRequestHeaders!]!
+}
+
+enum PerformanceWorkflowStatuses {
+  ACTIVE
+  BLOCKED_FROM_SOLD
+}
+
+type CartItem {
+  id: ID!
+  event: Event!
+  performance: Performance!
+  cartItemProducts: [CartItemProduct!]
+  quantity: Int!
+  price: Float
+  eventId: Int!
+  ticketTypeId: Int!
+  performanceId: Int!
+  type: CartItemType!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  ticketType: TicketType!
+}
+
+# Cart Item Types
+enum CartItemType {
+  TICKET
+  PRODUCT
+}
+
+type CartItemProduct {
+  id: ID!
+  product: Product!
+  productId: ID!
+  quantity: Int!
+  price: Float
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+}
+
+type Product {
+  id: ID!
+  creator: User!
+  title: String!
+  image: Media
+  description: String
+  price: Float!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  eventProducts: [EventProduct!]!
+  eventProduct: EventProduct!
+  published: Boolean!
+  availableQuantity: Int
+  maxPerOrder: Int
+  availabilityStatus: ProductStatusEnum
+  canEdit: Boolean!
+}
+
+# Product Status Enum
+enum ProductStatusEnum {
+  AVAILABLE
+  SOLD_OUT
+}
+
+type ImageSize {
+  size: Int!
+  alias: String!
+  location: String!
+  keyId: String!
+}
+
+type ImageSizeSet {
+  high: ImageSize
+  medium: ImageSize
+  small: ImageSize
+  thumbnailSmall: ImageSize
+  thumbnailMedium: ImageSize
+  thumbnailHigh: ImageSize
+}
+
+type DrmAsset {
+  key: String!
+  location: String
+  mediaLocation: [String!]
+  encryptionScheme: DrmEncriptionSchema!
+  keySystems: DrmKeySystems!
+  streamingFormats: StreamingFormat!
+  contentId: String!
+  licenseServerURL: String
+  licenseServerCertURL: String
+}
+
+# Encryption standards(deprecated)
+enum DrmEncriptionSchema {
+  CENC
+  CBCS
+  NONE
+}
+
+# DRM Key systems
+enum DrmKeySystems {
+  Widevine
+  PlayReady
+  FairPlay
+  Marlin
+  NONE
+}
+
+# Streaming format
+enum StreamingFormat {
+  HLS
+  DASH
+  NONE
+}
+
+type EventMovieSubtitle {
+  id: ID!
+  user: User!
+  media: Media!
+  title: String
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  canEdit: Boolean!
+  canRemove: Boolean!
+}
+
+type Media {
+  id: ID!
+  accountId: ID!
+  createdByUserId: Float!
+  keyId: String!
+  bucketId: String
+  location: String
+  originalFilename: String
+  mimetype: String!
+  size: Int
+  drm: Boolean!
+  sizes: ImageSizeSet
+  storage: MediaStorage!
+  bucket: StorageBucket!
+  status: MediaStatus!
+  error: String
+  duration: Int!
+  drmAssets: [DrmAsset!]
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  expirationAt: Timestamp
+}
+
+# Media File Storage
+enum MediaStorage {
+  S3
+}
+
+# Bucket in Storage
+enum StorageBucket {
+  POSTERS
+  GENERAL
+  MEDIA
+  INVOICE
+  EXPORT
+}
+
+# Media File Processing Status
+enum MediaStatus {
+  UPLOADED
+  PROCESSING
+  PUBLISHED
+  ERROR
+}
+
+type EventMovieLicense {
+  id: ID!
+  user: User!
+  note: String
+  countries: [CountryCode!]
+  startDate: Timestamp
+  endDate: Timestamp
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  canEdit: Boolean!
+  canRemove: Boolean!
+}
+
+type VideoLink {
+  id: ID!
+  title: String
+  image: String
+  link: String!
+  previewLink: String
+  order: Int!
+}
+
+# Custom movie ratings
+type CustomMovieRating {
+  id: ID!
+  description: String!
+  image: Media
+  imageId: Int
+  deletedAt: Timestamp
+}
+
+type EventMoviePackage {
+  eventMovieId: Float!
+  packageId: Float!
+}
+
+# Custom movie categories
+type CustomMovieCategory {
+  id: ID!
+  description: String!
+  image: Media
+  imageId: Int
+  deletedAt: Timestamp
+}
+
+type ChapterTimecodes {
+  title: String!
+  timecode: Int!
+  deeplink: String
+  imageLocation: String
+  imageSizes: ImageSizeSet
+  mediaId: ID
+}
+
+type EventMovie {
+  id: ID!
+  user: User!
+
+  # Duration in seconds
+  duration: Int!
+  status: MovieStatuses!
+  approachabilityType: MovieApproachabilityType!
+  rating: MovieRating!
+  customRatingId: Int
+  customRating: CustomMovieRating
+  customCategoryId: Int
+  customMovieCategory: CustomMovieCategory
+  isWithoutVideo: Boolean!
+  published: Boolean!
+  videoMedia: Media
+  movieAudios: [EventMovieAudio!]
+  movieSubtitles: [EventMovieSubtitle!]
+  movieLicenses: [EventMovieLicense!]
+  title: String
+  error: String
+  description: String
+  videoLinks: [VideoLink!]
+  chapterTimecodes: [ChapterTimecodes!]
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  posters: [Media!]
+  eventMoviePackages: [EventMoviePackage!]!
+  playlistItems: [EventMoviePlaylistItem!]
+  canEdit: Boolean!
+  packageIds: [ID!]!
+}
+
+# Movie Statuses
+enum MovieStatuses {
+  LEGACY
+  DRAFT
+  UPLOADED
+  PROCESSING
+  PUBLISHED
+  ERROR
+}
+
+enum MovieApproachabilityType {
+  OWN_SOURCE
+  PRIVATE_LIBRARY
+  PUBLIC_LIBRARY
+}
+
+# Movie rating
+enum MovieRating {
+  G
+  PG
+  PG13
+  NC16
+  M18
+  R21
+}
+
+type EventMoviePlaylistItem {
+  id: ID!
+  movie: EventMovie!
+  userId: ID!
+  eventMovieId: ID!
+  playlist: EventMoviePlaylist
+  eventMoviePlaylistId: ID!
+  priority: Int!
+  order: Int!
+  createdAt: Timestamp!
+  updatedAt: Timestamp
+}
+
+type EventMoviePlaylist {
+  id: ID!
+  user: User!
+  title: String!
+  description: String
+  items: [EventMoviePlaylistItem!]
+  createdAt: Timestamp!
+  updatedAt: Timestamp
+}
+
+type EventCategory {
+  id: ID!
+  title: String!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+}
+
+type EventHistory {
+  id: ID!
+  eventId: Int!
+  userId: Int
+  previousStatus: EventStatuses!
+  currentStatus: EventStatuses!
+  comment: String
+  createdAt: Timestamp!
+}
+
+# Event Statuses
+enum EventStatuses {
+  DRAFT
+  PENDING
+  PENDING_CANCELLATION
+  PUBLISHED
+  PUBLISHED_PENDING_PAYMENT
+  DECLINED
+  AWAITING_CANCELLATION
+  CANCELED
+  CLOSED
+}
+
+type EventMovieMetadata {
+  year: Int
+  directors: String
+  writers: String
+  actors: String
+}
+
+type EventFee {
+  perTicket: Float
+  perTicketPercent: Float
+  perFreeTicket: Float
+  licenseFeePercent: Float
+  licenseFee: Float
+  fee: Float
+  setupFee: Float
+  minimumGuaranteeFee: Float
+  perProduct: Float
+  productFee: Float
+  capPerPerformance: Float
+  allowCapPerPerformance: Float
+}
+
+type ContactMetadata {
+  facebook: String
+  instagram: String
+  email: String
+  phone: String
+}
+
+type CongratsEmailMetadataEntity {
+  subject: String
+  body: String
+}
+
+type PackageAccess {
+  access: String!
+  params: JSON
+}
+
+# The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+scalar JSON
+
+type Package {
+  id: ID!
+  title: String!
+  alias: String!
+  access: [PackageAccess!]!
+  order: Int!
+  features: [String!]
+  disabled: Boolean
+}
+
+type EventConfigParams {
+  autoPause: Boolean
+}
+
+# The event model
+type Event {
+  id: ID!
+  account: Account!
+  accountId: ID!
+  organizerId: ID!
+
+  # The Organization who created the event
+  eventOrganizer: OrganizerEntity!
+  creator: User!
+  title: String!
+  featured: Boolean
+  categoryId: Int!
+  venue: Venue
+
+  # Package type frizzed after the publishing of the event
+  package: Package
+  dressCode: String
+  ageRestrictions: AgeRestriction
+  poster: String
+  userGuideIncludeCoupon: Boolean
+  userGuideCouponCode: String
+  website: String
+  videoLinks: [VideoLink!]
+  contactMetadata: ContactMetadata
+  eventMovieMetadata: EventMovieMetadata
+  facebook: String
+  congratsMetadata: CongratsEmailMetadataEntity
+  createdAt: Timestamp!
+  updatedAt: Timestamp
+  slug: String!
+  status: EventStatuses!
+  customStatusText: String
+  customStatusColor: EventCustomStatusColor
+  customStatusDate: Timestamp
+  isPrivate: Boolean!
+
+  # The event audio playing started without sync service(a heartbeat)
+  isNonAudioSynced: Boolean!
+  rating: MovieRating
+  customRatingId: Int
+  customRating: CustomMovieRating
+  currencyKey: CurrencyCode!
+  feesIncludedInTicketPrice: Boolean
+  fee: EventFee
+  description: String
+  addTitleToPoster: Boolean
+  capacity: Int
+  isUnlimitedCapacity: Boolean!
+  eventHistory: [EventHistory!]
+  ticketTypes: [TicketType!]
+  performances: [Performance!]
+  ticketTransferPerformanceGroups: [TicketTransferPerformanceGroup!]
+  discounts: [Discount!]
+  category: EventCategory
+  ticketTypePerformances: [TicketTypePerformance!]
+  posters: [Media!] @deprecated(reason: "Use eventPosters field")
+  eventPosters: [EventPoster!]
+  eventProducts: [EventProduct!]
+  accessCodes: [AccessCode!]
+
+  # Start date of the earliest performance
+  startDate: Timestamp!
+
+  # End date of the latest performance
+  endDate: Timestamp
+
+  # Start date of the actual performance
+  actualPerformanceStartDate: Timestamp
+  isLastPerformance: Boolean!
+  movieFromGallery: Boolean!
+  movieSourceType: EventMovieSourceType!
+  priceRangeStart: Float
+  priceRangeEnd: Float
+  countryKey: CountryCode
+  movie: EventMovie
+  playlist: EventMoviePlaylist
+  eventMovieId: ID
+  eventMoviePlaylistId: ID
+  deeplink: String
+  isDemoMode: Boolean!
+  featuredOrder: Timestamp
+  configParams: EventConfigParams
+  linkUrl: String
+  linkDescription: String
+  cancellationAction: EventCancellationAction
+  cancelAfter: Timestamp
+  cancellationVoucherAmount: Float
+  maxProductsPerOrder: Int
+  salesReport: SalesReport
+  products: [Product!]
+  ticketsRequiredMinSpend: Float!
+  hiddenAudioIds: [ID!]!
+  cancellationReason: String
+  organizer: User @deprecated(reason: "Use eventOrganizer instead")
+}
+
+# Age Restriction Category
+enum AgeRestriction {
+  PG
+  PG13
+  NC16
+  M18
+  R21
+  R
+  U
+  M
+  RC
+}
+
+# Custom status color
+enum EventCustomStatusColor {
+  Red
+  Yellow
+  Green
+  Blue
+  Teal
+  Purple
+}
+
+enum EventCancellationAction {
+  Refund
+  GiveVouchers
+}
+
+type Role {
+  id: ID!
+  title: String!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+}
+
+type BankAccountInfo {
+  accountName: String
+  bankName: String
+  SWIFTBICCode: String
+  bankCode: String
+  branchCode: String
+  accountNumber: String
+}
+
+# Fees applied to event holders
+type EventHolderFee {
+  id: ID!
+  userId: Int!
+  user: User!
+  currency: CurrencyCode!
+  minimumGuarantee: Float!
+  freeTicketFee: Float!
+  productFee: Float!
+  paidTicketPercentage: Float!
+  paidTicketMinimumFee: Float!
+}
+
+type NotificationMetadata {
+  eventId: Float
+  performanceId: Float
+  ticketId: Float
+  organizerId: Float
+  customId: Float
+}
+
+type Notification {
+  id: ID!
+  title: String!
+  body: String
+  type: NotificationType
+  user: User!
+  isRead: Boolean
+  notificationMetadata: NotificationMetadata
+  createdAt: Timestamp!
+  updatedAt: Timestamp
+}
+
+enum NotificationType {
+  CUSTOM
+  TICKET
+  EVENT
+  ORGANIZER
+}
+
+#
+type UserNotificationCountry {
+  countryCode: CountryCode!
+  userId: Float!
+}
+
+type StripeSubscription {
+  id: ID!
+  title: String!
+  stripeSubscriptionId: String!
+  stripePriceId: String!
+  stripeCustomerId: String!
+  stripeProductId: String!
+  status: String!
+  currentPeriodStart: Timestamp!
+  currentPeriodEnd: Timestamp!
+  atPeriodEnd: Timestamp
+  cancelAtPeriodEnd: Boolean!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+}
+
+type LicenseRequestMovie {
+  id: ID!
+  licenseRequest: LicenseRequest!
+  licenseRequestId: Float!
+  numberOfScreenings: Float
+  movieTittle: String!
+  screeningDates: String!
+  format: String!
+  status: LicenseRequestMovieStatus!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+}
+
+# License Request Movie Flow Status
+enum LicenseRequestMovieStatus {
+  PENDING
+  APPROVED
+  DECLINED
+}
+
+type LicenseRequest {
+  id: ID!
+  user: User!
+  createdByUserId: Float!
+  account: Account!
+  venueText: String!
+  existingCustomer: Boolean!
+  customerName: String!
+  organizationName: String!
+  customerPhone: String
+  customerEmail: String
+  fullInvoiceAddress: String!
+  countryKey: CountryCode
+  maxAudienceSize: Float
+  screenSize: String!
+  chargingAdmissionFee: Boolean!
+  ticketPrice: String
+  planRunEntireFilm: Boolean!
+  involveAudienceParticipation: Boolean!
+  involveLivePerformance: Boolean!
+  involveThemedElements: Boolean!
+  involveAnySpecialEffects: Boolean!
+  screeningSummary: String
+  advertisingScreen: Boolean!
+  advertisingScreenDetails: String
+  otherThirdPartyPromotion: Boolean!
+  organizationResponsibleCommunication: String
+  thirdPartyPromotionOrganizations: String
+  tittle: String!
+  status: LicenseRequestStatus!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  licenseRequestMovie: [LicenseRequestMovie!]
+}
+
+# License Request Flow Status
+enum LicenseRequestStatus {
+  PENDING
+  APPROVED
+  UNAVAILABLE
+  DRAFT
+  DECLINED
+  PROCESSING
+  CANCELED
+}
+
+type AccountTeamRoleEntity {
+  alias: String!
+  title: String!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+}
+
+type AccountTeamMemberEntity {
+  id: ID!
+  accountId: Float!
+  userId: Float
+  invitedEmail: String
+  invitedAt: Timestamp
+  isPrimary: Boolean!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  user: User
+  roles: [AccountTeamRoleEntity!]
+}
+
+type User {
+  id: ID!
+  email: String!
+
+  # First Name
+  firstName: String!
+
+  # Company name
+  companyName: String
+
+  # Last Name
+  lastName: String
+  middleName: String
+  emailNotifications: Int
+  activated: Boolean!
+  phone: String
+  photo: String
+  birthday: Timestamp
+  city: String
+  state: String
+  zipcode: String
+  address: String
+  address2: String
+  invoiceCompanyName: String
+  invoiceStreetAddress: String
+  invoiceCity: String
+  invoiceState: String
+  invoiceZipcode: String
+  invoiceCountryKey: CountryCode
+  note: String
+  referredBy: String
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  countryKey: CountryCode!
+  gender: Gender!
+  disabled: Boolean
+  trusted: Boolean
+  completed: Boolean
+  guest: Boolean
+  bankAccountInfo: BankAccountInfo
+  socialMetadata: SocialMetadata
+  language: LanguageCode!
+  notificationCountries: [UserNotificationCountry!]
+  futureEventsNotificationMode: NotificationMode
+  futureEventsNotificationCategoryIds: [Int!]
+  futureEventsNotificationFrequency: NotificationFrequency
+  defaultCurrencyKey: CurrencyCode
+  roles: [Role!]!
+  packageId: Float
+  package: Package
+  accountId: Float
+  isStripeConnect: Boolean!
+  isAllowDisconnect: Boolean!
+  isComplete: Boolean!
+  hasFakeEmail: Boolean!
+  hasPassword: Boolean!
+  countUnreadNotifications: Int!
+  hasActiveSubscription: Boolean!
+  futureEventsNotificationCountryCodes: [String!]!
+  account: Account
+  accountRoles: [AccountTeamRoleEntity!]
+  rolePermissions: [RolePermission!]
+}
+
+# Gender
+enum Gender {
+  MALE
+  FEMALE
+  NOT_SPECIFIED
+}
+
+enum NotificationMode {
+  Default
+  Advanced
+  None
+}
+
+enum NotificationFrequency {
+  Each
+  Weekly
+  BiWeekly
+}
+
+type Account {
+  id: ID!
+  title: String!
+  createBy: User!
+  createdByUserId: Float!
+  packageId: Float!
+  package: Package
+  currencyKey: CurrencyCode!
+  defaultTimeZone: String
+  invoiceCompanyName: String
+  invoiceStreetAddress: String
+  invoiceCity: String
+  invoiceState: String
+  invoiceZipcode: String
+  invoiceCountryKey: CountryCode
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  userRoles: [AccountTeamRoleEntity!]
+}
+
+type AnalyticEventJoinSync {
+  id: ID!
+  eventAction: String
+  eventValue: String
+  createdAt: Timestamp!
+  userId: Float!
+  performanceId: Float!
+  ticketTypeId: Float!
+  organizerId: Float!
+  ticketId: Float!
+}
+
+type BuildsDistributionLocationChecksum {
+  md5: String
+  sha256: String
+  sha512: String
+}
+
+type BuildsDistributionLocation {
+  platform: BuildPlatformEnum!
+  location: String!
+  checksums: BuildsDistributionLocationChecksum
+}
+
+# Platforms
+enum BuildPlatformEnum {
+  WIN32
+  WIN64
+  MAC
+  MAC_SILICON
+  LINUX64
+  UBUNTU
+  ARM
+}
+
+type EventMoviePoster {
+  movie: EventMovie!
+  media: Media!
+  order: Int!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+}
+
+type EventInstantJoinParams {
+  joinStep: EventInstantJoinStep!
+  eventId: ID!
+  performanceId: ID!
+  ticketTypeId: ID
+  countryKey: CountryCode
+}
+
+enum EventInstantJoinStep {
+  PERFORMANCE_SELECT
+  TICKET_TYPE_SELECT
+  PRODUCT_SELECT
+  AUDIO_SELECT
+  PLAY_TICKET
+}
+
+type EventStatusResult {
+  eventId: ID!
+  status: EventStatuses!
+  comment: String
+}
+
+type PendingRequestEventSummary {
+  pendingApproval: Int!
+  pendingCancellation: Int!
+}
+
+type PublicTicketType {
+  id: ID!
+  title: String!
+  description: String
+  allowPreprint: Boolean!
+  price: Float!
+  sorting: Int!
+  totalQuantity: Int!
+  availableQuantity: Int!
+  minPerOrder: Int
+  maxPerOrder: Int
+  minSpendSumPerOrder: Float
+  minSpendSumPerTicket: Float
+  salesStart: Timestamp
+  salesEnd: Timestamp!
+  status: PublicTicketTypeStatus!
+  isHidden: Boolean!
+}
+
+# Ticket type statuses
+enum PublicTicketTypeStatus {
+  SOLD_OUT
+  AVAILABLE
+  EXPIRED
+  NOT_STARTED
+  INACTIVE
+}
+
+type PublicPerformance {
+  id: ID!
+  startDate: Timestamp
+  endDate: Timestamp
+  timezone: String
+  title: String
+  deeplink: String
+  workflowStatus: PerformanceWorkflowStatuses!
+  event: Event
+  venue: Venue @deprecated(reason: "Migrate to event.venue")
+  status: PerformanceStatuses
+  ticketTypes: [PublicTicketType!]
+}
+
+# Performance Statuses
+enum PerformanceStatuses {
+  AVAILABLE
+  EXPIRED
+  SOLD_OUT
+}
+
+# The public event model
+type PublicEvent {
+  id: ID!
+  organizer: User!
+  organizerId: Float @deprecated(reason: "Use accountId instead")
+  accountId: Float!
+  createdByUserId: Float!
+  venueId: Float!
+  eventMovieId: Float!
+  title: String!
+  featured: Boolean
+  featuredOrder: Timestamp
+  dressCode: String
+  ageRestrictions: AgeRestriction
+  poster: String
+  website: String
+  videoLinks: [VideoLink!]
+  facebook: String
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  slug: String!
+  status: EventStatuses!
+  customStatusText: String
+  customStatusColor: EventCustomStatusColor
+  isPrivate: Boolean!
+  rating: MovieRating
+  customRatingId: Int
+  customRating: CustomMovieRating
+  currencyKey: CurrencyCode!
+  feesIncludedInTicketPrice: Boolean
+  description: String
+  addTitleToPoster: Boolean
+  capacity: Int
+  performances: [PublicPerformance!]
+  category: EventCategory
+  posters: [Media!]
+  eventPosters: [EventPoster!]
+  products: [Product!]
+  eventMoveMetadata: EventMovieMetadata
+  configParams: EventConfigParams
+  venue: Venue
+  actualPerformanceStartDate: Timestamp
+  priceRangeStart: Float
+  priceRangeEnd: Float
+  countryKey: CountryCode
+  deeplink: String
+  isDemoMode: Boolean!
+  linkUrl: String
+  linkDescription: String
+  contactMetadata: ContactMetadata
+  titleText: String
+  descriptionText: String
+  hasCoupons: Boolean!
+  customStatusColorHex: String
+  cancellationReason: String
+  eventOrganizer: User
+}
+
+type UserCurrencies {
+  defaultCurrencyKey: CurrencyCode!
+  selectedCurrencyKeys: [CurrencyCode!]!
+}
+
+type PublicUser {
+  id: ID!
+  email: String!
+  firstName: String!
+  lastName: String
+  middleName: String
+  phone: String
+  photo: String
+}
+
+type PublicOrganizer {
+  id: ID!
+  email: String!
+  firstName: String!
+  lastName: String
+  middleName: String
+  phone: String
+  photo: String
+  companyName: String
+}
+
+type RolePermission {
+  action: String!
+  module: String!
+  subject: String!
+  inverted: Boolean!
+}
+
+type PaginatedUserResponse {
+  items: [User!]!
+  totalItems: Int!
+}
+
+type PaginatedPublicUserResponse {
+  items: [PublicUser!]!
+  totalItems: Int!
+}
+
+type PaginatedMediaResponse {
+  items: [Media!]!
+  totalItems: Int!
+}
+
+type PaginatedNotificationResponse {
+  items: [Notification!]!
+  totalItems: Int!
+  countUnreadNotifications: Int!
+}
+
+type TestTicket {
+  syncToken: String!
+  media: Media!
+}
+
+type TicketExpirationStatus {
+  status: String!
+  expirationTimeHours: Int
+}
+
+type ProceedWithUsingTicketStatus {
+  status: String!
+  description: String!
+}
+
+type PaginatedTicketResponse {
+  items: [Ticket!]!
+  totalItems: Int!
+}
+
+type PaginatedTicketFeedbackResponse {
+  items: [TicketFeedback!]!
+  totalItems: Int!
+}
+
+type ValidatedTicket {
+  ticket: Ticket!
+  status: TicketValidateState!
+  lastScan: TicketScan
+}
+
+enum TicketValidateState {
+  VALID
+  VALID_ENTERED
+  VALID_EXITED
+  CANCELED
+}
+
+type TicketScanResult {
+  event: Event
+  organizer: User
+  ticket: Ticket
+  performanceId: ID
+  scanType: TicketScanType!
+  status: TicketScanStatus!
+}
+
+type PaginatedTicketScanResponse {
+  items: [TicketScan!]!
+  totalItems: Int!
+}
+
+type PaginatedTicketTransferPerformanceGroupResponse {
+  items: [TicketTransferPerformanceGroup!]!
+  totalItems: Int!
+}
+
+type PaginatedTicketTransferResponse {
+  items: [TicketTransfer!]!
+  totalItems: Int!
+}
+
+type PaginatedEventResponse {
+  items: [Event!]!
+  totalItems: Int!
+}
+
+type SalesReport {
+  gross: Float!
+  serviceFee: Float!
+  net: Float!
+  paymentCharge: Float!
+  attended: Float!
+  ticketsTotal: Float!
+  ticketsSold: Float!
+  maxCapacity: Int!
+}
+
+type UserGuideLanguage {
+  codes: [String!]!
+}
+
+type ScreeningLimitation {
+  screeningCountLimit: Int
+  usedScreeningsInMonth: Int!
+}
+
+type PaginatedPublicEventResponse {
+  items: [PublicEvent!]!
+  totalItems: Int!
+}
+
+type SyncParams {
+  # Sync server domain
+  domain: String!
+
+  # Port number
+  port: Float
+
+  # Use wss
+  secure: Boolean!
+}
+
+type MovieDrmHttpRequestHeaders {
+  movieId: ID!
+  drmHttpRequestHeader: String
+}
+
+type PaginatedPerformanceResponse {
+  items: [Performance!]!
+  totalItems: Int!
+}
+
+type TicketCountSoldPerPerformance {
+  performance_id: Int
+  count: Int
+}
+
+type PaginatedTicketTypeResponse {
+  items: [TicketType!]!
+  totalItems: Int!
+}
+
+type PaginatedEventMovieResponse {
+  items: [EventMovie!]!
+  totalItems: Int!
+}
+
+type PaginatedProductResponse {
+  items: [Product!]!
+  totalItems: Int!
+}
+
+type CouponValidation {
+  code: ID!
+  quantity: Int!
+  status: CouponStatuses!
+  validFrom: Timestamp
+  validTo: Timestamp
+}
+
+# Coupon Statuses
+enum CouponStatuses {
+  EXPIRED
+  VALID
+  NOT_STARTED
+  USED
+}
+
+type ImportCouponResultError {
+  line: Int!
+  coupon: String
+  errorText: String
+}
+
+type ImportCouponResult {
+  imported: Int!
+  skipped: Int!
+  errors: [ImportCouponResultError!]
+}
+
+type PaginatedEventCouponResponse {
+  items: [EventCoupon!]!
+  totalItems: Int!
+}
+
+type GenerateCouponResult {
+  firstCode: String!
+  lastCode: String!
+}
+
+type EventReport {
+  paymentFee: Float!
+  refunded: Float!
+  serviceFee: Float!
+  net: Float!
+  gross: Float!
+  ticketCount: Int!
+  count: Int!
+  ticketTypeId: Int!
+  event: Event!
+  createdAt: Timestamp!
+}
+
+type TicketTypeReport {
+  serviceFee: Float!
+  net: Float!
+  gross: Float!
+  ticketCount: Int!
+  ticketType: TicketType!
+  event: Event!
+  createdAt: Timestamp!
+}
+
+type ProductReport {
+  serviceFee: Float!
+  net: Float!
+  gross: Float!
+  count: Int!
+  price: Float!
+  product: Product!
+  event: Event!
+  createdAt: Timestamp!
+}
+
+type EventReportSubtotal {
+  gross: Float
+  serviceFee: Float
+  IPRHFee: Float
+  net: Float
+  ticketCount: Int
+  count: Int
+  paymentFee: Float
+  refunded: Float
+  discounted: Float
+}
+
+type EventHolderReport {
+  paymentFee: Float!
+  refunded: Float!
+  serviceFee: Float!
+  net: Float!
+  gross: Float!
+  ticketCount: Int!
+  organizer: User!
+  createdAt: Timestamp!
+}
+
+type EventOrderReport {
+  createdAt: Timestamp!
+  serviceFee: Float!
+  paymentFee: Float!
+  net: Float!
+  gross: Float!
+  refunded: Float!
+  discounted: Float!
+  totalPrice: Float!
+  ticketCount: Int!
+  productGross: Float!
+  productServiceFee: Float!
+  productCount: Int!
+  productNet: Float!
+  ticketGross: Float!
+  ticketServiceFee: Float!
+  ticketNet: Float!
+  orderId: ID!
+  organizer: User!
+  attendee: User!
+  user: User!
+  event: Event!
+  ticketType: TicketType!
+  performance: Performance!
+  products: [TicketProduct!]!
+}
+
+type PaginatedReportGroupedByEventWithSubtotalResponse {
+  items: [EventReport!]!
+  totalItems: Int!
+  subtotal: EventReportSubtotal!
+  currencyKey: CurrencyCode
+}
+
+type PaginatedReportGroupedByTicketTypeWithSubtotalResponse {
+  items: [TicketTypeReport!]!
+  totalItems: Int!
+  subtotal: EventReportSubtotal!
+  currencyKey: CurrencyCode
+}
+
+type PaginatedReportGroupedByProductWithSubtotalResponse {
+  items: [ProductReport!]!
+  totalItems: Int!
+  subtotal: EventReportSubtotal!
+  currencyKey: CurrencyCode
+}
+
+type PaginatedReportGroupedByEventHolderWithSubtotalResponse {
+  items: [EventHolderReport!]!
+  totalItems: Int!
+  subtotal: EventReportSubtotal!
+  currencyKey: CurrencyCode
+}
+
+type PaginatedReportGroupedByEventOrderDetailedWithSubtotalResponse {
+  items: [EventOrderReport!]!
+  totalItems: Int!
+  subtotal: EventReportSubtotal!
+  currencyKey: CurrencyCode
+}
+
+type PaginatedInvoiceResponse {
+  items: [Invoice!]!
+  totalItems: Int!
+}
+
+type PaginatedAnalyticEventJoinSyncResponse {
+  items: [AnalyticEventJoinSync!]!
+  totalItems: Int!
+}
+
+type PaginatedEventMovieAudioResponse {
+  items: [EventMovieAudio!]!
+  totalItems: Int!
+}
+
+type PaginatedEventMovieSubtitleResponse {
+  items: [EventMovieSubtitle!]!
+  totalItems: Int!
+}
+
+type PaginatedEventMovieLicenseResponse {
+  items: [EventMovieLicense!]!
+  totalItems: Int!
+}
+
+type PaginatedDiscountResponse {
+  items: [Discount!]!
+  totalItems: Int!
+}
+
+type DiscountValidation {
+  id: ID!
+  code: String!
+  discountInPercent: Boolean!
+  discountAmount: Float!
+  discountMax: Float
+  result: DiscountValidationResult!
+}
+
+enum DiscountValidationResult {
+  Valid
+  Used
+  NotStarted
+  Expired
+  CurrencyMismatch
+  NotApplicable
+}
+
+type DiscountUsageCounts {
+  totalCount: Int
+}
+
+type CartPrices {
+  # The total, including discounts, taxes, shipping, and other fees
+  grandTotal: Float!
+
+  # Subtotal without taxes
+  subtotalExcludingTax: Float!
+
+  # Subtotal with taxes
+  subtotalIncludingTax: Float!
+
+  # Subtotal with any discounts applied, but not taxes
+  subtotalWithDiscountExcludingTax: Float!
+
+  # Subtotal by products
+  subtotalProducts: Float!
+
+  # Sum of discounts applied
+  discountTotal: Float!
+}
+
+type CartItemOutput {
+  id: ID!
+  ticketData: CartItem!
+  quantity: Int!
+  prices: CartPrices!
+  expireAt: Timestamp
+}
+
+type CartObjectType {
+  cartId: ID!
+  cart: [CartItemOutput!]!
+  prices: CartPrices!
+  discountValidation: DiscountValidation
+}
+
+type StripePriceRecurring {
+  interval: String!
+
+  # The number of intervals between subscription billings. For example, `interval=month` and `interval_count=3` bills every 3 months.
+  # Maximum of one year interval allowed (1 year, 12 months, or 52 weeks).
+  interval_count: Int
+}
+
+type StripeProduct {
+  id: String!
+  active: Boolean!
+
+  # A short one-line description of the product, meant to be displayable to the customer. Only applicable to products of `type=good`.
+  caption: String
+
+  # Time at which the object was created. Measured in seconds since the Unix epoch.
+  created: Float!
+  description: String
+
+  # A list of up to 8 URLs of images for this product, meant to be displayable to the customer.
+  images: [String!]!
+  livemode: Boolean!
+
+  # The product's name, meant to be displayable to the customer. Whenever this product is sold via a subscription, name will show up on associated invoice line item descriptions.
+  name: String!
+
+  # A URL of a publicly-accessible webpage for this product.
+  url: String
+  prices: [StripePrice!]
+}
+
+type StripePrice {
+  id: String!
+
+  # Time at which the object was created. Measured in seconds since the Unix epoch.
+  created: Int!
+
+  # Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).
+  currency: String!
+  unit_amount: Float
+
+  # Has the value `true` if the object exists in live mode or the value `false` if the object exists in test mode.
+  livemode: Boolean
+
+  # A brief description of the price, hidden from customers
+  nickname: String
+
+  # The ID of the product this price is associated with.
+  product: StripeProduct
+  recurring: StripePriceRecurring
+}
+
+type StripePlan {
+  active: Boolean!
+  amount: Float!
+  created: Float
+  currency: CurrencyCode!
+  interval: PaymentInterval!
+  intervalCount: Int!
+  trialPeriodDays: Int
+}
+
+# The frequency at which a subscription is billed. One of day, week, month or year.
+enum PaymentInterval {
+  MONTH
+  YEAR
+  WEEK
+  DAY
+}
+
+type AssociatedObjects {
+  type: String!
+  id: String!
+}
+
+type EphemeralKey {
+  # Unique identifier for the object.
+  id: String!
+
+  # String representing the object's type. Objects of the same type share the same value.
+  object: String!
+
+  # Time at which the object was created. Measured in seconds since the Unix epoch.
+  created: Int!
+
+  # Time at which the key will expire. Measured in seconds since the Unix epoch.
+  expires: Int!
+
+  # Has the value `true` if the object exists in live mode or the value `false` if the object exists in test mode.
+  livemode: Boolean!
+
+  # The key's secret. You can use this value to make authorized requests to the Stripe API.
+  secret: String
+  associated_objects: [AssociatedObjects!]
+}
+
+type EphemeralKeyResult {
+  ephemeralKey: EphemeralKey!
+  customer: JSON!
+}
+
+type PaymentIntentResult {
+  # Unique identifier for the object.
+  id: ID!
+
+  #  Time at which the object was created. Measured in seconds since the Unix epoch.
+  canceledAt: Int
+
+  # Amount intended to be collected by this PaymentIntent. A positive integer representing how much to charge in the [smallest currency unit](https://stripe.com/docs/currencies#zero-decimal) (e.g., 100 cents to charge $1.00 or 100 to charge ¥100, a zero-decimal currency). The minimum amount is $0.50 US or [equivalent in charge currency](https://stripe.com/docs/currencies#minimum-and-maximum-charge-amounts). The amount value supports up to eight digits (e.g., a value of 99999999 for a USD charge of $999,999.99).
+  amount: Float!
+
+  #
+  #         The client secret of this PaymentIntent. Used for client-side retrieval using a publishable key.
+  #         The client secret can be used to complete a payment from your frontend. It should not be stored, logged, embedded in URLs, or exposed to anyone other than the customer. Make sure that you have TLS enabled on any page that includes the client secret.
+  #         Refer to our docs to [accept a payment](https://stripe.com/docs/payments/accept-a-payment) and learn about how `client_secret` should be handled.
+  #
+  clientSecret: String!
+
+  # Three-letter [ISO currency code](https://www.iso.org/iso-4217-currency-codes.html), in lowercase. Must be a [supported currency](https://stripe.com/docs/currencies).
+  currency: String
+
+  #  An arbitrary string attached to the object. Often useful for displaying to users.
+  description: String
+}
+
+type StripePriceTableParams {
+  publicKey: String!
+  priceTableId: String!
+  customerId: String
+  email: String
+}
+
+type PaginatedEventMoviePlaylistItemResponse {
+  items: [EventMoviePlaylistItem!]!
+  totalItems: Int!
+}
+
+type PaginatedEventMoviePlaylistResponse {
+  items: [EventMoviePlaylist!]!
+  totalItems: Int!
+}
+
+type CodeRedeemResult {
+  type: CodeRedeemType!
+  eventId: ID
+  organizerId: ID
+  accountId: ID
+  code: String!
+}
+
+enum CodeRedeemType {
+  VOUCHER
+  TICKET_TRANSFER
+  HIDDEN_TICKET_TYPE
+}
+
+type OrderPaymentSubtotal {
+  currencyKey: CurrencyCode
+  totalPaid: Float
+  totalRefunded: Float
+}
+
+type PaginatedOrderResponse {
+  items: [Order!]!
+  totalItems: Int!
+}
+
+type PaginatedOrderAdminResponse {
+  items: [Order!]!
+  totalItems: Int!
+  subtotals: [OrderPaymentSubtotal!]!
+}
+
+type PaymentParams {
+  # Payment Provider
+  provider: PaymentProvider!
+
+  # Payment Provider public key
+  publishableKey: String!
+
+  # Payment Provider account public key
+  accountPublishableKey: String
+
+  # Connected account
+  accountId: ID
+}
+
+# Payment Provider
+enum PaymentProvider {
+  STRIPE
+  CINEWAV_VIRTUAL_PAYMENT
+  BANK_TRANSFER
+}
+
+type StripePaymentMethod {
+  id: String!
+  type: String!
+  brand: String
+  country: String
+  expMonth: String
+  expYear: String
+  last4: String
+}
+
+type CurrentSubscription {
+  currentSubscription: StripeSubscription
+  currentPackage: Package!
+  currentStripePrice: StripePrice
+  currentStripePaymentMethod: StripePaymentMethod
+  currentStripePlan: StripePlan
+}
+
+type SubscriptionProduct {
+  package: Package!
+  stripeProduct: StripeProduct
+}
+
+type InviteInfo {
+  invitedAt: Timestamp!
+
+  # The email of the user that was invited to the account team
+  invitedEmail: String!
+
+  # The email of the user that invited the user to the account team
+  invitedByEmail: String!
+
+  # Whether the user needs to re-login to accept the invite
+  needReLogin: Boolean!
+  accountTitle: String!
+  accountId: ID!
+}
+
+type PaginatedAccountTeamMemberEntityResponse {
+  items: [AccountTeamMemberEntity!]!
+  totalItems: Int!
+}
+
+type AuthAccess {
+  assignToAllPerformances: Boolean!
+  performances: [String!]!
+  eventId: ID!
+}
+
+type AuthPayload {
+  user: User!
+  token: String!
+  applications: [CinewavApplication!]
+  access: AuthAccess
+}
+
+type TawkToParams {
+  # Tawk TO generated token
+  token: String!
+
+  # User id
+  userId: ID!
+
+  # User  Email
+  userEmail: String!
+
+  # User name
+  userName: String!
+}
+
+type PaginatedVenueResponse {
+  items: [Venue!]!
+  totalItems: Int!
+}
+
+type PaginatedLicenseRequestResponse {
+  items: [LicenseRequest!]!
+  totalItems: Int!
+}
+
+type PaginatedLicenseRequestMovieResponse {
+  items: [LicenseRequestMovie!]!
+  totalItems: Int!
+}
+
+type PaginatedAccessCodeResponse {
+  items: [AccessCode!]!
+  totalItems: Int!
+}
+
+type AgoraClassroomParams {
+  appId: String!
+  userUuid: ID!
+  roomUuid: ID!
+  areaCode: AgoraAreas!
+  userName: String!
+  roomName: String!
+  duration: Int!
+  roleType: Int!
+  roomType: Int!
+  pretest: Boolean!
+  language: String!
+}
+
+# Agora Areas
+enum AgoraAreas {
+  CHINA
+  ASIA
+  NORTH_AMERICA
+  EUROPE
+  JAPAN
+  INDIA
+  GLOBAL
+}
+
+type AgoraChannelParams {
+  appId: String!
+  userUuid: ID!
+  channelUuid: ID!
+  areaCode: AgoraAreas!
+  userName: String!
+  channelName: String!
+  role: RtcRole!
+  roleType: Int! @deprecated(reason: "migrate to `role` property")
+  language: String!
+}
+
+enum RtcRole {
+  PUBLISHER
+  SUBSCRIBER
+}
+
+type Query {
+  checkEmailAvailability(email: String!): Boolean!
+  getPublicOrganizers: [PublicOrganizer!]!
+  getUsers(options: GetUserListInput!): PaginatedUserResponse!
+  getUserById(id: ID!): User!
+  me: User!
+  getUserCurrencies: UserCurrencies!
+  exportUsers(options: GetUserListInput!, timezone: String!): Media!
+  getUsersByPerformanceId(
+    performanceID: ID!
+    options: GetPublicUserListInput!
+  ): PaginatedPublicUserResponse!
+  getAccountTeamMembers(
+    options: GetAccountTeamMemberEntityListInput!
+  ): PaginatedAccountTeamMemberEntityResponse!
+  inviteAccountTeamInfo(inviteCode: String!): InviteInfo!
+  getUserAccounts: [Account!]!
+  getCurrentUserAccount: Account!
+  getMedia(options: GetMediaListInput!): PaginatedMediaResponse!
+  getMediaById(id: ID!): Media
+  getNotifications(
+    options: GetNotificationListInput!
+  ): PaginatedNotificationResponse!
+  getNotificationById(id: ID!): Notification
+  getCarts: [String!]!
+  getCartById(id: ID!): CartObjectType!
+  clearCartById(id: ID!): Boolean!
+  getOrderById(id: ID!): Order!
+  getOrderByIdAdmin(id: ID!): Order!
+
+  # getOrders use only for the mobile client(CUSTOMER role)
+  getOrders(options: GetOrderListInput!): PaginatedOrderResponse!
+  getOrdersAdmin(options: GetOrderAdminListInput!): PaginatedOrderAdminResponse!
+  exportOrdersAdmin(options: GetOrderAdminListInput!, timezone: String!): Media!
+  getPackages: [Package!]!
+  getSubscriptionProducts: [SubscriptionProduct!]!
+  getCurrentSubscription: CurrentSubscription!
+  getPaymentParams(paymentProvider: PaymentProvider!): PaymentParams!
+  getPaymentParamsByOrganizerId(
+    paymentProvider: PaymentProvider!
+
+    # deprecated param
+    organizerId: ID
+    accountId: ID
+  ): PaymentParams
+  getPaymentParamsByOrderId(
+    paymentProvider: PaymentProvider!
+    orderUUID: ID!
+  ): PaymentParams
+  generateStripeConnect: String!
+  getStripeEphemeralKeys(version: String!): EphemeralKeyResult
+  getStripeEphemeralKeysByOrganizerId(
+    # deprecated param
+    organizerId: ID
+    accountId: ID!
+    version: String!
+  ): EphemeralKeyResult
+  getStripeEphemeralKeysByAccountId(
+    accountId: ID!
+    version: String!
+  ): EphemeralKeyResult
+  getStripePublicKeyByOrganizerId(organizerId: ID!): String
+  getStripePricingTableParams: StripePriceTableParams
+
+  # Query is deprecated
+  getStripePublicKey(orderId: ID): String
+  @deprecated(
+    reason: "Move to getPaymentParams, getPaymentParamsByOrderId from v1.5.0"
+  )
+  getTickets(
+    options: GetTicketListInput!
+    groupedByPerformance: Boolean = false
+  ): PaginatedTicketResponse!
+  getTicketById(id: Int!): Ticket!
+  getTicketByIdForAdministration(ticketId: Int!): Ticket!
+  getTicketsForAdministration(
+    options: GetTicketListInput!
+  ): PaginatedTicketResponse!
+  getTicketsByOrderId(orderUUID: ID!): [Ticket!]!
+  getTicketsByPerformanceId(
+    performanceId: ID!
+    options: GetTicketListInput!
+  ): PaginatedTicketResponse!
+  getTestTicket: TestTicket!
+  checkNonSyncTicketExpirationStatus(
+    ticketId: ID!
+    ticketCode: Float!
+  ): TicketExpirationStatus!
+  exportTickets(timezone: String!, options: GetTicketListInput!): Media!
+  getFeedbacks(
+    options: GetTicketFeedbackListInput!
+  ): PaginatedTicketFeedbackResponse
+  getFeedbackById(id: ID!): Event
+  exportTicketFeedback(
+    options: GetTicketFeedbackListInput!
+    timezone: String!
+  ): Media!
+  validateTicket(performanceId: ID!, ticketCode: ID!): ValidatedTicket!
+  getTicketScansByTicket(performanceId: ID!, ticketCode: ID!): [TicketScan!]!
+  getTicketScans(options: GetTicketScanListInput!): PaginatedTicketScanResponse!
+  exportTicketScans(options: GetTicketScanListInput!, timezone: String!): Media!
+  getTicketProducts(ticketCode: ID!): [TicketProduct!]!
+  getTicketTransfersByPerformance(
+    options: GetTicketTransferPerformanceGroupListInput!
+  ): PaginatedTicketTransferPerformanceGroupResponse!
+  getTicketTransferByUuid(uuid: ID!): TicketTransfer
+  getTicketTransfers(
+    options: GetTicketTransferListInput!
+  ): PaginatedTicketTransferResponse!
+  exportTicketTransfers(
+    options: GetTicketTransferListInput!
+    timezone: String!
+  ): Media!
+  getEvents(options: GetEventListInput!): PaginatedEventResponse
+  getEventById(id: ID!): Event
+  getPendingRequestEventSummary(
+    options: PendingRequestEventSummaryInput = {}
+  ): PendingRequestEventSummary!
+  getUserGuideLanguages: UserGuideLanguage
+  getScreeningLimitation: ScreeningLimitation!
+  getPublicEvents(
+    options: GetPublicEventListInput!
+  ): PaginatedPublicEventResponse!
+  getPublicEventBySlug(
+    slug: ID!
+    couponCode: String
+    includePastPerformances: Boolean
+  ): PublicEvent
+  getPublicEventById(
+    id: ID!
+    couponCode: String
+    includePastPerformances: Boolean
+  ): PublicEvent
+  getPreviewEventBySlug(slug: String!): Event!
+  getAvailableCountriesForFilter(includeDemo: Boolean = true): [CountryCode!]
+  getEventInstantJoinParams(
+    eventId: ID!
+    performanceId: ID!
+    couponCode: String
+  ): EventInstantJoinParams
+  getProducts(options: GetProductListInput!): PaginatedProductResponse
+  getProductsByEventId(
+    eventId: ID!
+    options: GetProductListInput!
+  ): PaginatedProductResponse
+  getProductById(id: ID!): Product
+
+  # Check Product price with combination of the minSpend
+  checkProductRestrictions(
+    eventId: ID!
+    product: ProductConditionsInput!
+  ): Boolean!
+  getEventCouponByEventId(
+    eventId: ID!
+    options: GetEventCouponListInput!
+  ): PaginatedEventCouponResponse!
+  getEventCouponByIds(ids: [ID!]!): [EventCoupon!]!
+  validateCoupon(eventId: ID!, couponCode: String!): CouponValidation!
+  exportCsvEventCoupons(eventId: ID!, timezone: String!): Media!
+  getPublishedPerformances(
+    options: GetPerformanceListInput!
+  ): PaginatedPerformanceResponse
+  getPerformancesByEventId(
+    eventId: ID!
+    options: GetPerformanceListInput!
+  ): PaginatedPerformanceResponse
+  getPerformanceById(id: ID!): Performance!
+  getSyncParamsByPerformanceId(performanceId: ID!): SyncParams
+  getCategories: [EventCategory!]!
+  getTicketTypesByEventId(
+    eventId: ID!
+    options: GetTicketTypeListInput!
+  ): PaginatedTicketTypeResponse!
+  getEventMovieLicenseByMovieId(
+    movieId: ID!
+    options: GetEventMovieLicenseListInput!
+  ): PaginatedEventMovieLicenseResponse!
+  getMovies(
+    options: GetEventMovieListInput!
+    isPrivateList: Boolean
+  ): PaginatedEventMovieResponse!
+  getMovieById(id: ID!): EventMovie
+  getEventMovieAudiosByEventId(
+    eventId: ID!
+    options: GetEventMovieAudioListInput!
+  ): PaginatedEventMovieAudioResponse!
+  getEventMovieAudiosByMovieId(
+    movieId: ID!
+    options: GetEventMovieAudioListInput!
+  ): PaginatedEventMovieAudioResponse!
+  getEventMovieSubtitlesByEventId(
+    eventId: ID!
+    options: GetEventMovieSubtitleListInput!
+  ): PaginatedEventMovieSubtitleResponse!
+  getEventMovieSubtitlesByMovieId(
+    movieId: ID!
+    options: GetEventMovieSubtitleListInput!
+  ): PaginatedEventMovieSubtitleResponse!
+  getInvoices(options: GetInvoiceListInput!): PaginatedInvoiceResponse!
+  getInvoiceById(id: ID!): Invoice!
+  getDefaultFeeByCurrencyCode(currencyKey: CurrencyCode!): EventFee
+  findCustomMovieRating: [CustomMovieRating!]!
+  getMoviePlaylistItem(
+    eventMoviePlaylistId: Float!
+    options: GetEventMoviePlaylistItemListInput!
+  ): PaginatedEventMoviePlaylistItemResponse!
+  getMoviePlaylist(
+    options: GetEventMoviePlaylistListInput!
+  ): PaginatedEventMoviePlaylistResponse!
+  findCustomMovieCategory: [CustomMovieCategory!]!
+  checkCodeRedeem(code: String!): CodeRedeemResult
+  getReportSalesGroupByEvent(
+    options: GetEventReportListInput!
+    currencyKey: CurrencyCode
+  ): PaginatedReportGroupedByEventWithSubtotalResponse!
+  getReportSalesGroupByTicketType(
+    options: GetTicketTypeReportListInput!
+    currencyKey: CurrencyCode
+  ): PaginatedReportGroupedByTicketTypeWithSubtotalResponse!
+  getReportSalesGroupByProduct(
+    options: GetProductReportListInput!
+    currencyKey: CurrencyCode
+  ): PaginatedReportGroupedByProductWithSubtotalResponse!
+
+  # The data is displayed in the report list grouped by Event Holder. Allow only for Admin role.
+  getReportSalesGroupByEventHolder(
+    options: GetEventHolderReportListInput!
+    currencyKey: CurrencyCode
+  ): PaginatedReportGroupedByEventHolderWithSubtotalResponse!
+  getReportSalesGroupByEventOrderDetailed(
+    options: GetEventOrderReportListInput!
+    currencyKey: CurrencyCode
+  ): PaginatedReportGroupedByEventOrderDetailedWithSubtotalResponse!
+  exportSummeryReport(
+    reportSalesGroupByEventOptions: GetEventReportListInput!
+    reportSalesGroupByTicketTypeOptions: GetTicketTypeReportListInput!
+    reportSalesGroupByProductOptions: GetProductReportListInput!
+    currencyKey: CurrencyCode
+  ): Media!
+  exportAdminSummeryReport(
+    reportSalesGroupByEventOptions: GetEventReportListInput!
+    reportEventHolderReportOptions: GetEventHolderReportListInput!
+    currencyKey: CurrencyCode!
+  ): Media!
+  exportReportSalesGroupByEventOrderDetailed(
+    options: GetEventOrderReportListInput!
+    currencyKey: CurrencyCode!
+    timezone: String!
+  ): Media!
+  getAnalytic(
+    options: GetAnalyticEventJoinSyncListInput!
+  ): PaginatedAnalyticEventJoinSyncResponse!
+  findEventHolderFeeForUser(userId: ID!): [EventHolderFee!]!
+  findEventHolderFeeForCurrentUser: [EventHolderFee!]!
+  findPaginatedDiscounts(
+    options: GetDiscountListInput!
+  ): PaginatedDiscountResponse!
+  getDiscountById(id: ID!): Discount!
+  validateDiscount(eventId: ID!, discountCode: String!): DiscountValidation!
+  generateChatToken: TawkToParams!
+  getVenueById(id: ID!): Venue!
+  getVenues(options: GetVenueListInput!): PaginatedVenueResponse!
+  generateAccessCode: String!
+  getAccessCodeById(id: ID!): AccessCode!
+  getAccessCodes(
+    eventId: ID!
+    options: GetAccessCodeListInput!
+  ): PaginatedAccessCodeResponse!
+  exportAccessCode(eventId: ID!): Media!
+  getAgoraClassroomParams(performanceId: ID!): AgoraClassroomParams!
+  getAgoraChannelParams(performanceId: ID!): AgoraChannelParams!
+  getAgoraRtmToken(performanceId: ID!): String!
+  getAgoraRtcToken(performanceId: ID!): String!
+  getLicenseRequests(
+    options: GetLicenseRequestListInput!
+  ): PaginatedLicenseRequestResponse!
+  getLicenseRequestById(id: ID!): LicenseRequest
+  getLicenseRequestMovies(
+    licenseRequestId: ID!
+    options: GetLicenseRequestMovieListInput!
+  ): PaginatedLicenseRequestMovieResponse
+  getLicenseRequestMovieById(id: ID!): LicenseRequestMovie
+}
+
+input GetUserListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: UserSortParam
+  filter: UserFilterParam
+}
+
+input UserSortParam {
+  id: SortOrder
+  emailNotifications: SortOrder
+  activated: SortOrder
+  lastName: SortOrder
+  firstName: SortOrder
+  companyName: SortOrder
+  trusted: SortOrder
+  email: SortOrder
+  country: SortOrder
+  referredBy: SortOrder
+  createdAt: SortOrder
+  updatedAt: SortOrder
+}
+
+# Sort Order
+enum SortOrder {
+  ASC
+  DESC
+}
+
+input UserFilterParam {
+  id: NumberOperators
+  email: StringOperators
+  firstName: FulltextOperators
+  companyName: StringOperators
+  lastName: FulltextOperators
+  middleName: StringOperators
+  phone: StringOperators
+  city: StringOperators
+  state: StringOperators
+  zipcode: StringOperators
+  address: StringOperators
+  address2: StringOperators
+  referredBy: StringOperators
+  emailNotifications: BooleanOperators
+  activated: BooleanOperators
+  disabled: BooleanOperators
+  trusted: BooleanOperators
+  birthday: DateOperators
+  createdAt: DateOperators
+  updatedAt: DateOperators
+  roles: RolesFilterParam
+  or: [UserFilterParam!]
+  and: [UserFilterParam!]
+}
+
+input NumberOperators {
+  eq: Int
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  between: NumberRange
+  in: [Int!]
+  notIn: [Int!]
+}
+
+input NumberRange {
+  start: Int!
+  end: Int!
+}
+
+input StringOperators {
+  eq: String
+  contains: String
+}
+
+input FulltextOperators {
+  eq: String
+  contains: String
+  match: String
+  matchExtended: FulltextMatchParams
+}
+
+input FulltextMatchParams {
+  match: String!
+  additionalFields: [String!] = []
+  modifier: FulltextMatchSearchModifier = IN_NATURAL_LANGUAGE_MODE_WITH_QUERY_EXPANSION
+}
+
+# Full-Text Search Functions Modifiers (https://dev.mysql.com/doc/refman/8.0/en/fulltext-search.html)
+enum FulltextMatchSearchModifier {
+  IN_NATURAL_LANGUAGE_MODE
+  IN_NATURAL_LANGUAGE_MODE_WITH_QUERY_EXPANSION
+  IN_BOOLEAN_MODE
+  WITH_QUERY_EXPANSION
+}
+
+input BooleanOperators {
+  eq: Boolean
+}
+
+input DateOperators {
+  eq: Timestamp
+  before: Timestamp
+  after: Timestamp
+  between: DateRange
+}
+
+input DateRange {
+  start: Timestamp!
+  end: Timestamp!
+}
+
+input RolesFilterParam {
+  title: EnumUserRolesFilterOperator
+  or: [RolesFilterParam!]
+  and: [RolesFilterParam!]
+}
+
+input EnumUserRolesFilterOperator {
+  eq: UserRoles
+  in: [UserRoles!]
+  notIn: [UserRoles!]
+}
+
+# User Roles
+enum UserRoles {
+  CUSTOMER
+  ORGANIZER
+  ACCESS_CODE
+  ADMIN
+}
+
+input GetPublicUserListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: PublicUserSortParam
+  filter: PublicUserFilterParam
+}
+
+input PublicUserSortParam {
+  id: SortOrder
+  lastName: SortOrder
+  firstName: SortOrder
+  email: SortOrder
+}
+
+input PublicUserFilterParam {
+  id: NumberOperators
+  email: StringOperators
+  firstName: FulltextOperators
+  lastName: FulltextOperators
+  middleName: StringOperators
+  phone: StringOperators
+  or: [PublicUserFilterParam!]
+  and: [PublicUserFilterParam!]
+}
+
+input GetAccountTeamMemberEntityListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: AccountTeamMemberSortParam
+  filter: AccountTeamMemberFilterParam
+}
+
+input AccountTeamMemberSortParam {
+  id: SortOrder
+  invitedEmail: SortOrder
+  invitedAt: SortOrder
+}
+
+input AccountTeamMemberFilterParam {
+  id: NumberOperators
+  user: PublicUserFilterParam
+  invitedEmail: StringOperators
+  isPrimary: BooleanOperators
+  or: [AccountTeamMemberFilterParam!]
+  and: [AccountTeamMemberFilterParam!]
+}
+
+input GetMediaListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: MediaSortParam
+  filter: MediaFilterParam
+}
+
+input MediaSortParam {
+  id: SortOrder
+  mimetype: SortOrder
+  location: SortOrder
+}
+
+input MediaFilterParam {
+  id: NumberOperators
+  location: StringOperators
+  mimetype: StringOperators
+  drm: BooleanOperators
+}
+
+input GetNotificationListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: NotificationSortParam
+  filter: NotificationFilterParam
+}
+
+input NotificationSortParam {
+  id: SortOrder
+  title: SortOrder
+  isRead: SortOrder
+  createdAt: SortOrder
+  updatedAt: SortOrder
+}
+
+input NotificationFilterParam {
+  title: StringOperators
+  isRead: BooleanOperators
+  createdAt: DateOperators
+  updatedAt: DateOperators
+  or: [NotificationFilterParam!]
+  and: [NotificationFilterParam!]
+}
+
+input GetOrderListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: OrderSortParam
+  filter: OrderFilterParam
+}
+
+input OrderSortParam {
+  id: SortOrder
+  totalPrice: SortOrder
+  ticketsPrice: SortOrder
+  serviceFee: SortOrder
+  currencyKey: SortOrder
+  createdAt: SortOrder
+}
+
+input OrderFilterParam {
+  id: NumberOperators
+  totalPrice: NumberOperators
+  ticketsPrice: NumberOperators
+  serviceFee: NumberOperators
+  currencyKey: StringOperators
+  uuid: StringOperators
+  eventTitle: StringOperators
+  or: [OrderFilterParam!]
+  and: [OrderFilterParam!]
+}
+
+input GetOrderAdminListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: OrderSortParam
+  filter: OrderFilterParamAdmin
+}
+
+input OrderFilterParamAdmin {
+  id: NumberOperators
+  totalPrice: NumberOperators
+  ticketsPrice: NumberOperators
+  serviceFee: NumberOperators
+  currencyKey: StringOperators
+  uuid: StringOperators
+  eventTitle: StringOperators
+  or: [OrderFilterParamAdmin!]
+  and: [OrderFilterParamAdmin!]
+  createdAt: DateOperators
+  orderItems: OrderItemFilterParamAdmin
+  tickets: OrderTicketFilterParamAdmin
+  status: EnumOrderStatusEnumFilterOperator
+  user: UserFilterParam
+}
+
+input OrderItemFilterParamAdmin {
+  id: NumberOperators
+  couponCode: StringOperators
+  couponId: NumberOperators
+  event: OrderItemEventFilterParamAdmin
+  eventId: NumberOperators
+  orderItemProducts: OrderItemProductFilterParamAdmin
+  or: [OrderItemFilterParamAdmin!]
+  and: [OrderItemFilterParamAdmin!]
+}
+
+input OrderItemEventFilterParamAdmin {
+  id: NumberOperators
+  title: FulltextOperators
+  slug: StringOperators
+  featured: BooleanOperators
+  featuredOrder: DateOperators
+  website: StringOperators
+  facebook: StringOperators
+  currencyKey: StringOperators
+  description: StringOperators
+  createdAt: DateOperators
+  updatedAt: DateOperators
+  addTitleToPoster: BooleanOperators
+  capacity: NumberOperators
+  eventMovieId: NumberOperators
+  status: EnumEventStatusesFilterOperator
+  startDate: DateOperators
+  endDate: DateOperators
+  isDemoMode: BooleanOperators
+  isPrivate: BooleanOperators
+  isNonAudioSynced: BooleanOperators
+  venueId: NumberOperators
+  or: [OrderItemEventFilterParamAdmin!]
+  and: [OrderItemEventFilterParamAdmin!]
+  organizerId: NumberOperators
+}
+
+input EnumEventStatusesFilterOperator {
+  eq: EventStatuses
+  in: [EventStatuses!]
+  notIn: [EventStatuses!]
+}
+
+input OrderItemProductFilterParamAdmin {
+  id: NumberOperators
+  productId: NumberOperators
+  and: [OrderItemProductFilterParamAdmin!]
+  or: [OrderItemProductFilterParamAdmin!]
+}
+
+input OrderTicketFilterParamAdmin {
+  id: NumberOperators
+  code: StringOperators
+  ticketPrice: NumberOperators
+  totalPrice: NumberOperators
+  eventId: NumberOperators
+  organizerId: NumberOperators
+  ticketTypeId: NumberOperators
+  performanceId: NumberOperators
+  expirationTime: DateOperators
+  createdAt: DateOperators
+  updatedAt: DateOperators
+  startDate: DateOperators
+  endDate: DateOperators
+  attendee: AttendeeFilterParam
+  order: OrderFilterParam
+  ticketScans: ScanTicketFilterParam
+  lastScan: DateOperators
+  user: UserFilterParam
+  or: [OrderTicketFilterParamAdmin!]
+  and: [OrderTicketFilterParamAdmin!]
+  ticketProducts: OrderTicketProductFilterParamAdmin
+}
+
+input AttendeeFilterParam {
+  id: NumberOperators
+  email: StringOperators
+  firstName: FulltextOperators
+  companyName: StringOperators
+  lastName: FulltextOperators
+  middleName: StringOperators
+  phone: StringOperators
+  or: [AttendeeFilterParam!]
+  and: [AttendeeFilterParam!]
+}
+
+input ScanTicketFilterParam {
+  id: NumberOperators
+  eventId: NumberOperators
+  organizerId: NumberOperators
+  ticketId: NumberOperators
+  performanceId: NumberOperators
+  createdAt: DateOperators
+  lastScan: DateOperators
+  scanType: EnumTicketScanTypeFilterOperator
+  status: EnumTicketScanStatusFilterOperator
+  event: EventFilterParam
+  organizer: UserFilterParam
+  ticket: TicketFilterParam
+  or: [ScanTicketFilterParam!]
+  and: [ScanTicketFilterParam!]
+}
+
+input EnumTicketScanTypeFilterOperator {
+  eq: TicketScanType
+  isNull: Boolean
+}
+
+input EnumTicketScanStatusFilterOperator {
+  eq: TicketScanStatus
+  in: [TicketScanStatus!]
+  notIn: [TicketScanStatus!]
+}
+
+input EventFilterParam {
+  id: NumberOperators
+  title: FulltextOperators
+  slug: StringOperators
+  featured: BooleanOperators
+  featuredOrder: DateOperators
+  website: StringOperators
+  facebook: StringOperators
+  currencyKey: StringOperators
+  description: StringOperators
+  createdAt: DateOperators
+  updatedAt: DateOperators
+  addTitleToPoster: BooleanOperators
+  capacity: NumberOperators
+  eventMovieId: NumberOperators
+  status: EnumEventStatusesFilterOperator
+  startDate: DateOperators
+  endDate: DateOperators
+  isDemoMode: BooleanOperators
+  isPrivate: BooleanOperators
+  isNonAudioSynced: BooleanOperators
+  venueId: NumberOperators
+  or: [EventFilterParam!]
+  and: [EventFilterParam!]
+}
+
+input TicketFilterParam {
+  id: NumberOperators
+  code: StringOperators
+  ticketPrice: NumberOperators
+  totalPrice: NumberOperators
+  eventId: NumberOperators
+  organizerId: NumberOperators
+  ticketTypeId: NumberOperators
+  performanceId: NumberOperators
+  expirationTime: DateOperators
+  createdAt: DateOperators
+  updatedAt: DateOperators
+  startDate: DateOperators
+  endDate: DateOperators
+  attendee: AttendeeFilterParam
+  order: OrderFilterParam
+  ticketScans: ScanTicketFilterParam
+  lastScan: DateOperators
+  user: UserFilterParam
+  or: [TicketFilterParam!]
+  and: [TicketFilterParam!]
+}
+
+input OrderTicketProductFilterParamAdmin {
+  id: NumberOperators
+  title: FulltextOperators
+  description: StringOperators
+  createdAt: DateOperators
+  updatedAt: DateOperators
+  price: NumberOperators
+  published: BooleanOperators
+  productId: NumberOperators
+  and: [OrderTicketProductFilterParamAdmin!]
+  or: [OrderTicketProductFilterParamAdmin!]
+}
+
+input EnumOrderStatusEnumFilterOperator {
+  eq: OrderStatus
+  in: [OrderStatus!]
+  notIn: [OrderStatus!]
+}
+
+input GetTicketListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: TicketSortParam
+  filter: TicketFilterParam
+}
+
+input TicketSortParam {
+  id: SortOrder
+  ticketPrice: SortOrder
+  createdAt: SortOrder
+  updatedAt: SortOrder
+  expirationTime: SortOrder
+  startDate: SortOrder
+  endDate: SortOrder
+  lastScan: SortOrder
+}
+
+input GetTicketFeedbackListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: FeedbackSortParam
+  filter: FeedbackFilterParam
+}
+
+input FeedbackSortParam {
+  id: SortOrder
+  eventId: SortOrder
+  userId: SortOrder
+  organizerId: SortOrder
+  rating: SortOrder
+  createdAt: SortOrder
+}
+
+input FeedbackFilterParam {
+  eventId: NumberOperators
+  organizerId: NumberOperators
+  userId: NumberOperators
+  rating: NumberOperators
+  comment: FulltextOperators
+  organizer: UserFilterParam
+  user: UserFilterParam
+  event: UserFilterParam
+  createdAt: DateOperators
+  or: [ScanTicketFilterParam!]
+  and: [ScanTicketFilterParam!]
+}
+
+input GetTicketScanListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: ScanTicketSortParam
+  filter: ScanTicketFilterParam
+}
+
+input ScanTicketSortParam {
+  id: SortOrder
+  organizerId: SortOrder
+  eventId: SortOrder
+  performanceId: SortOrder
+  createdAt: SortOrder
+  lastScan: SortOrder
+  updatedAt: SortOrder
+  scanType: SortOrder
+  status: SortOrder
+}
+
+input GetTicketTransferPerformanceGroupListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: TicketTransferSortParam
+  filter: TicketTransferFilterParam
+}
+
+input TicketTransferSortParam {
+  id: SortOrder
+  createdAt: SortOrder
+}
+
+input TicketTransferFilterParam {
+  code: StringOperators
+  eventId: NumberOperators
+  organizerId: NumberOperators
+  ticketTypeId: NumberOperators
+  performanceId: NumberOperators
+  idDistributing: BooleanOperators
+  expiratAt: DateOperators
+  createdAt: DateOperators
+  updatedAt: DateOperators
+  receiver: PublicUserFilterParam
+  or: [TicketTransferFilterParam!]
+  and: [TicketTransferFilterParam!]
+}
+
+input GetTicketTransferListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: TicketTransferSortParam
+  filter: TicketTransferFilterParam
+}
+
+input GetEventListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: EventSortParam
+  filter: EventFilterParam
+}
+
+input EventSortParam {
+  id: SortOrder
+  title: SortOrder
+  dressCode: SortOrder
+  ageRestrictions: SortOrder
+  slug: SortOrder
+  currencyKey: SortOrder
+  capacity: SortOrder
+  status: SortOrder
+  startDate: SortOrder
+  endDate: SortOrder
+  updatedAt: SortOrder
+  isDemoMode: SortOrder
+  isPrivate: SortOrder
+  isNonAudioSynced: SortOrder
+}
+
+input PendingRequestEventSummaryInput {
+  createdAt: DateOperators
+  and: [PendingRequestEventSummaryInput!]
+  or: [PendingRequestEventSummaryInput!]
+}
+
+input GetPublicEventListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: PublicEventSortParam
+  filter: PublicEventFilterParam
+}
+
+input PublicEventSortParam {
+  id: SortOrder
+  title: SortOrder
+  dressCode: SortOrder
+  ageRestrictions: SortOrder
+  slug: SortOrder
+  currencyKey: SortOrder
+  capacity: SortOrder
+  startDate: SortOrder
+  endDate: SortOrder
+  actualPerformanceStartDate: SortOrder
+  organizerId: SortOrder
+  countryKey: SortOrder
+  priceRangeStart: SortOrder
+  priceRangeEnd: SortOrder
+  isDemoMode: SortOrder
+  featuredOrder: SortOrder
+}
+
+input PublicEventFilterParam {
+  id: NumberOperators
+  title: FulltextOperators
+  slug: StringOperators
+  featured: BooleanOperators
+  featuredOrder: DateOperators
+  website: StringOperators
+  facebook: StringOperators
+  currencyKey: StringOperators
+  description: FulltextOperators
+  createdAt: DateOperators
+  updatedAt: DateOperators
+  addTitleToPoster: BooleanOperators
+  capacity: NumberOperators
+  startDate: DateOperators
+  endDate: DateOperators
+  actualPerformanceStartDate: DateOperators
+  organizerId: NumberOperators
+  countryKey: EnumCountryCodeFilterOperator
+  priceRangeStart: NumberOperators
+  priceRangeEnd: NumberOperators
+  isDemoMode: BooleanOperators
+  or: [PublicEventFilterParam!]
+  and: [PublicEventFilterParam!]
+}
+
+input EnumCountryCodeFilterOperator {
+  eq: CountryCode
+  in: [CountryCode!]
+  notIn: [CountryCode!]
+}
+
+input GetProductListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: ProductSortParam
+  filter: ProductFilterParam
+}
+
+input ProductSortParam {
+  id: SortOrder
+  title: SortOrder
+  price: SortOrder
+}
+
+input ProductFilterParam {
+  id: NumberOperators
+  title: FulltextOperators
+  description: StringOperators
+  createdAt: DateOperators
+  updatedAt: DateOperators
+  price: NumberOperators
+  published: BooleanOperators
+}
+
+input ProductConditionsInput {
+  quantity: Int!
+  price: Float!
+  maxPerOrder: Int!
+  maxPerTicket: Int!
+  id: ID
+}
+
+input GetEventCouponListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: EventCouponSortParam
+  filter: EventCouponFilterParam
+}
+
+input EventCouponSortParam {
+  code: SortOrder
+  id: SortOrder
+  title: SortOrder
+  createdAt: SortOrder
+  updatedAt: SortOrder
+}
+
+input EventCouponFilterParam {
+  id: NumberOperators
+  code: StringOperators
+  createdAt: DateOperators
+  updatedAt: DateOperators
+}
+
+input GetPerformanceListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: PerformanceSortParam
+  filter: PerformanceFilterParam
+}
+
+input PerformanceSortParam {
+  id: SortOrder
+  startDate: SortOrder
+  endDate: SortOrder
+}
+
+input PerformanceFilterParam {
+  id: NumberOperators
+  startDate: DateOperators
+  endDate: DateOperators
+  title: StringOperators
+  organizerId: NumberOperators
+  eventId: NumberOperators
+  event: EventFilterParam
+  or: [PerformanceFilterParam!]
+  and: [PerformanceFilterParam!]
+}
+
+input GetTicketTypeListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: TicketTypeSortParam
+  filter: TicketTypeFilterParam
+}
+
+input TicketTypeSortParam {
+  id: SortOrder
+  title: SortOrder
+  price: SortOrder
+  createdAt: SortOrder
+  updatedAt: SortOrder
+  eventId: SortOrder
+  totalQuantity: SortOrder
+  minPerOrder: SortOrder
+  maxPerOrder: SortOrder
+  minSpendSumPerOrder: SortOrder
+  minSpendSumPerTicket: SortOrder
+  sorting: SortOrder
+  salesStart: SortOrder
+  salesEnd: SortOrder
+  isHidden: SortOrder
+}
+
+input TicketTypeFilterParam {
+  id: NumberOperators
+  title: StringOperators
+  description: StringOperators
+  createdAt: DateOperators
+  updatedAt: DateOperators
+  eventId: NumberOperators
+  price: NumberOperators
+  totalQuantity: NumberOperators
+  minPerOrder: NumberOperators
+  maxPerOrder: NumberOperators
+  minSpendSumPerOrder: NumberOperators
+  minSpendSumPerTicket: NumberOperators
+  sorting: NumberOperators
+  salesStart: DateOperators
+  salesEnd: DateOperators
+  isHidden: BooleanOperators
+}
+
+input GetEventMovieLicenseListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: EventMovieLicenseSortParam
+  filter: EventMovieLicenseFilterParam
+}
+
+input EventMovieLicenseSortParam {
+  id: SortOrder
+  userId: SortOrder
+  eventMovieId: SortOrder
+  startDate: SortOrder
+  endDate: SortOrder
+  createdAt: SortOrder
+  updatedAt: SortOrder
+}
+
+input EventMovieLicenseFilterParam {
+  id: NumberOperators
+  userId: NumberOperators
+  eventMovieId: NumberOperators
+  note: StringOperators
+  startDate: DateOperators
+  endDate: DateOperators
+  createdAt: DateOperators
+  updatedAt: DateOperators
+}
+
+input GetEventMovieListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: EventMovieSortParam
+  filter: EventMovieFilterParam
+}
+
+input EventMovieSortParam {
+  id: SortOrder
+  title: SortOrder
+  duration: SortOrder
+  createdAt: SortOrder
+  updatedAt: SortOrder
+  published: SortOrder
+}
+
+input EventMovieFilterParam {
+  id: NumberOperators
+  customCategoryId: NumberOperators
+  title: StringOperators
+  description: StringOperators
+  createdAt: DateOperators
+  updatedAt: DateOperators
+  published: BooleanOperators
+  duration: NumberOperators
+  status: EnumMovieStatusesFilterOperator
+  or: [EventMovieFilterParam!]
+  and: [EventMovieFilterParam!]
+}
+
+input EnumMovieStatusesFilterOperator {
+  eq: MovieStatuses
+  in: [MovieStatuses!]
+  notIn: [MovieStatuses!]
+}
+
+input GetEventMovieAudioListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: EventMovieAudioSortParam
+  filter: EventMovieAudioFilterParam
+}
+
+input EventMovieAudioSortParam {
+  id: SortOrder
+  userId: SortOrder
+  mediaId: SortOrder
+  title: SortOrder
+  createdAt: SortOrder
+  updatedAt: SortOrder
+}
+
+input EventMovieAudioFilterParam {
+  id: NumberOperators
+  userId: NumberOperators
+  mediaId: NumberOperators
+  title: StringOperators
+  createdAt: DateOperators
+  updatedAt: DateOperators
+}
+
+input GetEventMovieSubtitleListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: EventMovieSubtitleSortParam
+  filter: EventMovieSubtitleFilterParam
+}
+
+input EventMovieSubtitleSortParam {
+  id: SortOrder
+  userId: SortOrder
+  mediaId: SortOrder
+  title: SortOrder
+  createdAt: SortOrder
+  updatedAt: SortOrder
+}
+
+input EventMovieSubtitleFilterParam {
+  id: NumberOperators
+  userId: NumberOperators
+  mediaId: NumberOperators
+  title: StringOperators
+  createdAt: DateOperators
+  updatedAt: DateOperators
+}
+
+input GetInvoiceListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: InvoiceSortParam
+  filter: InvoiceFilterParam
+}
+
+input InvoiceSortParam {
+  id: SortOrder
+  createdAt: SortOrder
+  updatedAt: SortOrder
+  userId: SortOrder
+  eventId: SortOrder
+  ticketsAmount: SortOrder
+  productsAmount: SortOrder
+  totalAmount: SortOrder
+  referenceNumber: SortOrder
+}
+
+input InvoiceFilterParam {
+  id: NumberOperators
+  userId: NumberOperators
+  eventId: NumberOperators
+  ticketsAmount: NumberOperators
+  productsAmount: NumberOperators
+  totalAmount: NumberOperators
+  createdAt: DateOperators
+  referenceNumber: StringOperators
+  updatedAt: DateOperators
+  status: EnumInvoiceStatusesFilterOperator
+  type: EnumInvoiceTypeFilterOperator
+  organizer: UserFilterParam
+  user: UserFilterParam
+  event: EventFilterParam
+  or: [InvoiceFilterParam!]
+  and: [InvoiceFilterParam!]
+}
+
+input EnumInvoiceStatusesFilterOperator {
+  eq: InvoiceStatuses
+  in: [InvoiceStatuses!]
+  notIn: [InvoiceStatuses!]
+}
+
+input EnumInvoiceTypeFilterOperator {
+  eq: InvoiceType
+  in: [InvoiceType!]
+  notIn: [InvoiceType!]
+}
+
+input GetEventMoviePlaylistItemListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: EventMoviePlaylistItemSortParam
+  filter: EventMoviePlaylistItemFilterParam
+}
+
+input EventMoviePlaylistItemSortParam {
+  id: SortOrder
+  order: SortOrder
+  priority: SortOrder
+  createdAt: SortOrder
+  updatedAt: SortOrder
+}
+
+input EventMoviePlaylistItemFilterParam {
+  id: NumberOperators
+  createdAt: DateOperators
+  updatedAt: DateOperators
+  priority: NumberOperators
+  order: NumberOperators
+  movie: EventMovieFilterParam
+  or: [EventMoviePlaylistItemFilterParam!]
+  and: [EventMoviePlaylistItemFilterParam!]
+}
+
+input GetEventMoviePlaylistListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: EventMoviePlaylistSortParam
+  filter: EventMoviePlaylistFilterParam
+}
+
+input EventMoviePlaylistSortParam {
+  id: SortOrder
+  title: SortOrder
+  createdAt: SortOrder
+  updatedAt: SortOrder
+}
+
+input EventMoviePlaylistFilterParam {
+  id: NumberOperators
+  title: StringOperators
+  description: StringOperators
+  createdAt: DateOperators
+  updatedAt: DateOperators
+  or: [EventMoviePlaylistFilterParam!]
+  and: [EventMoviePlaylistFilterParam!]
+}
+
+input GetEventReportListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: ReportEventSortParam
+  filter: ReportEventFilterParam
+}
+
+input ReportEventSortParam {
+  net: SortOrder
+  paymentFee: SortOrder
+  refunded: SortOrder
+  serviceFee: SortOrder
+  gross: SortOrder
+  ticketCount: SortOrder
+}
+
+input ReportEventFilterParam {
+  id: NumberOperators
+  userId: NumberOperators
+  organizerId: NumberOperators
+  createdAt: DateOperators
+  eventId: NumberOperators
+  ticketTypeId: NumberOperators
+  performanceId: NumberOperators
+  ticketCount: NumberOperators
+  or: [ReportEventFilterParam!]
+  and: [ReportEventFilterParam!]
+}
+
+input GetTicketTypeReportListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: ReportTicketTypeSortParam
+  filter: ReportTicketTypeFilterParam
+}
+
+input ReportTicketTypeSortParam {
+  net: SortOrder
+  serviceFee: SortOrder
+  gross: SortOrder
+  ticketCount: SortOrder
+  createdAt: SortOrder
+}
+
+input ReportTicketTypeFilterParam {
+  id: NumberOperators
+  userId: NumberOperators
+  organizerId: NumberOperators
+  createdAt: DateOperators
+  ticketTypeId: NumberOperators
+  performanceId: NumberOperators
+  eventId: NumberOperators
+  or: [ReportTicketTypeFilterParam!]
+  and: [ReportTicketTypeFilterParam!]
+}
+
+input GetProductReportListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: ReportProductSortParam
+  filter: ReportProductFilterParam
+}
+
+input ReportProductSortParam {
+  net: SortOrder
+  serviceFee: SortOrder
+  gross: SortOrder
+  ticketCount: SortOrder
+  count: SortOrder
+  createdAt: SortOrder
+  productName: SortOrder
+}
+
+input ReportProductFilterParam {
+  id: NumberOperators
+  userId: NumberOperators
+  organizerId: NumberOperators
+  createdAt: DateOperators
+  ticketTypeId: NumberOperators
+  performanceId: NumberOperators
+  eventId: NumberOperators
+  productId: NumberOperators
+  product: ProductFilterParam
+  or: [ReportProductFilterParam!]
+  and: [ReportProductFilterParam!]
+}
+
+input GetEventHolderReportListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: ReportEventHolderSortParam
+  filter: ReportEventHolderFilterParam
+}
+
+input ReportEventHolderSortParam {
+  net: SortOrder
+  paymentFee: SortOrder
+  refunded: SortOrder
+  serviceFee: SortOrder
+  gross: SortOrder
+  ticketCount: SortOrder
+  createdAt: SortOrder
+}
+
+input ReportEventHolderFilterParam {
+  id: NumberOperators
+  userId: NumberOperators
+  organizerId: NumberOperators
+  createdAt: DateOperators
+  organizer: UserFilterParam
+  eventId: NumberOperators
+  or: [ReportEventHolderFilterParam!]
+  and: [ReportEventHolderFilterParam!]
+}
+
+input GetEventOrderReportListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: ReportEventOrderSortParam
+  filter: ReportEventOrderFilterParam
+}
+
+input ReportEventOrderSortParam {
+  net: SortOrder
+  serviceFee: SortOrder
+  gross: SortOrder
+  ticketCount: SortOrder
+  createdAt: SortOrder
+}
+
+input ReportEventOrderFilterParam {
+  id: NumberOperators
+  userId: NumberOperators
+  organizerId: NumberOperators
+  ticketTypeId: NumberOperators
+  performanceId: NumberOperators
+  eventId: NumberOperators
+  createdAt: DateOperators
+  or: [ReportEventOrderFilterParam!]
+  and: [ReportEventOrderFilterParam!]
+}
+
+input GetAnalyticEventJoinSyncListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: AnalyticJoinSortParam
+  filter: AnalyticJoinFilterParam
+}
+
+input AnalyticJoinSortParam {
+  id: SortOrder
+  createdAt: SortOrder
+}
+
+input AnalyticJoinFilterParam {
+  id: NumberOperators
+  or: [AnalyticJoinFilterParam!]
+  and: [AnalyticJoinFilterParam!]
+}
+
+input GetDiscountListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: DiscountSortParam
+  filter: DiscountFilterParam
+}
+
+input DiscountSortParam {
+  discountAmount: SortOrder
+  code: SortOrder
+  createdAt: SortOrder
+}
+
+input DiscountFilterParam {
+  type: EnumDiscountTypeFilterOperator
+  status: EnumDiscountStatusFilterOperator
+  code: StringOperators
+  assignedCustomer: UserFilterParam
+  fromEventId: NumberOperators
+  and: [DiscountFilterParam!]
+  or: [DiscountFilterParam!]
+}
+
+input EnumDiscountTypeFilterOperator {
+  eq: DiscountType
+  in: [DiscountType!]
+  notIn: [DiscountType!]
+}
+
+input EnumDiscountStatusFilterOperator {
+  eq: DiscountStatus
+  in: [DiscountStatus!]
+  notIn: [DiscountStatus!]
+}
+
+input GetVenueListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: VenueSortParam
+  filter: VenueFilterParam
+}
+
+input VenueSortParam {
+  id: SortOrder
+  title: SortOrder
+  countryKey: SortOrder
+  createdAt: SortOrder
+  zipcode: SortOrder
+  capacity: SortOrder
+  updatedAt: SortOrder
+}
+
+input VenueFilterParam {
+  title: StringOperators
+  countryKey: EnumCountryCodeFilterOperator
+  address: StringOperators
+  address2: StringOperators
+  city: StringOperators
+  state: StringOperators
+  zipcode: StringOperators
+  capacity: NumberOperators
+  createdAt: DateOperators
+  updatedAt: DateOperators
+  accountId: NumberOperators
+  account: AccountFilterParam
+  or: [VenueFilterParam!]
+  and: [VenueFilterParam!]
+}
+
+input AccountFilterParam {
+  id: NumberOperators
+  title: StringOperators
+  invoiceCompanyName: StringOperators
+  isActive: BooleanOperators
+  or: [AccountFilterParam!]
+  and: [AccountFilterParam!]
+}
+
+input GetAccessCodeListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: AccessCodeSortParam
+  filter: AccessCodeFilterParam
+}
+
+input AccessCodeSortParam {
+  id: SortOrder
+  code: SortOrder
+  createdAt: SortOrder
+  updatedAt: SortOrder
+}
+
+input AccessCodeFilterParam {
+  id: NumberOperators
+  organizerId: NumberOperators
+  performanceId: NumberOperators
+  createdAt: DateOperators
+  updatedAt: DateOperators
+  or: [AccessCodeFilterParam!]
+  and: [AccessCodeFilterParam!]
+}
+
+input GetLicenseRequestListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: LicenseRequestSortParam
+  filter: LicenseRequestFilterParam
+}
+
+input LicenseRequestSortParam {
+  id: SortOrder
+  title: SortOrder
+  createdAt: SortOrder
+  updatedAt: SortOrder
+}
+
+input LicenseRequestFilterParam {
+  id: NumberOperators
+  status: EnumLicenseRequestStatusFilterOperator
+  userId: NumberOperators
+  createdAt: DateOperators
+  updatedAt: DateOperators
+}
+
+input EnumLicenseRequestStatusFilterOperator {
+  eq: LicenseRequestStatus
+  in: [LicenseRequestStatus!]
+  notIn: [LicenseRequestStatus!]
+}
+
+input GetLicenseRequestMovieListInput {
+  skip: Int = 0
+  take: Int = 25
+  sort: LicenseRequestMovieSortParam
+  filter: LicenseRequestMovieFilterParam
+}
+
+input LicenseRequestMovieSortParam {
+  id: SortOrder
+  movieTittle: SortOrder
+}
+
+input LicenseRequestMovieFilterParam {
+  id: NumberOperators
+  status: EnumLicenseRequestMovieStatusFilterOperator
+}
+
+input EnumLicenseRequestMovieStatusFilterOperator {
+  eq: LicenseRequestMovieStatus
+  in: [LicenseRequestMovieStatus!]
+  notIn: [LicenseRequestMovieStatus!]
+}
+
+type Mutation {
+  handleContactUsForm(
+    reCaptchaResponse: String!
+    contactUsInput: ContactUsInput!
+  ): Boolean!
+  sendEmailToAdmins(subject: String!, html: String!, text: String!): Boolean!
+  sendTestEmail(email: String!): Boolean!
+  login(loginInput: LoginInput!): AuthPayload!
+  loginAs(userId: ID!): AuthPayload!
+  loginWithAccessCode(loginInput: LoginAccessCodeInput!): AuthPayload!
+  loginByGuest: AuthPayload!
+  signUp(signUpInput: SignUpInput!): AuthPayload!
+  signUpOrganizer(singUpOrganizerInputs: SingUpOrganizerInputs!): Boolean!
+  signUpOrganizerWithPinCode(
+    singUpOrganizerInputs: SingUpOrganizerInputs!
+    pinCode: String!
+  ): Boolean!
+  logout: Boolean!
+  confirmEmail(emailConfirmToken: String!): AuthPayload!
+  changePassword(oldPassword: String!, newPassword: String!): Boolean!
+  triggerPasswordReset(email: String!): Boolean!
+  passwordReset(resetToken: String!, password: String!): AuthPayload!
+  resendActivationCode(email: String!): Boolean!
+  sendPinCode(email: String!): Boolean!
+  changeAccount(accountId: ID!): AuthPayload!
+
+  # Login by social network
+  loginSocialMobile(socialLoginInput: SocialLoginInput!): AuthPayload!
+
+  # Login by social network
+  loginSocial(socialLoginInput: SocialLoginInput!): AuthPayload!
+
+  # adjust user email by social network auth
+  adjustEmailAfterSocialAuth(email: String!): Boolean!
+  addUser(userInput: UserInput!): User!
+  addRoleToUser(userRoleInput: UserRoleInput!): Boolean!
+  removeUserById(id: ID!): Boolean!
+  updateUser(id: ID!, updateUserInputs: UpdateUserInputs!): User!
+  updateCurrentUser(updateUserInputs: UpdateCurrentUserInputs!): User!
+  removeMe: Boolean!
+  inviteUserToAccountTeam(
+    teamMemberInput: AddTeamMemberInputDto!
+  ): AccountTeamMemberEntity!
+  reInviteUserToAccountTeam(id: ID!): AccountTeamMemberEntity!
+  acceptInviteToAccountTeam(inviteCode: String!): AccountTeamMemberEntity!
+  updateUserInAccountTeam(
+    updateTeamMemberInputDto: UpdateTeamMemberInputDto!
+  ): AccountTeamMemberEntity!
+  deleteUserFromAccountTeam(id: ID!): Boolean!
+  createAccount(
+    createAccountInputs: CreateAccountInputs!
+    reCaptchaResponse: String!
+  ): Account!
+  updateAccount(updateAccountInputs: UpdateAccountInputs!): Account!
+  updateCurrentAccount(updateAccountInputs: UpdateAccountInputs!): Account!
+  leaveAccount(accountId: ID!): Boolean!
+  removeMediaById(id: ID!): Boolean!
+  createEmptyCart: String!
+  addTicketToCart(addToCardInput: AddToCardInput!): CartObjectType!
+  removeItemFromCart(cartId: ID!, itemId: ID!): CartObjectType!
+  addProductsToCartItem(
+    cartId: ID!
+    itemId: ID!
+    productData: [ProductData!]!
+  ): CartObjectType!
+  removeProductFromCartItem(
+    cartId: ID!
+    itemId: ID!
+    itemProductId: ID!
+  ): CartObjectType!
+  updateProductQuantityInCartItem(
+    cartId: ID!
+    itemId: ID!
+    itemProductId: ID!
+    quantity: Int = 1
+  ): CartObjectType!
+  updateProductQuantityInCartItemByProductId(
+    cartId: ID!
+    itemId: ID!
+    productId: ID!
+    quantity: Int = 1
+  ): CartObjectType!
+  applyDiscountToCart(cartId: String!, discountCode: String!): CartObjectType!
+  clearDiscountFromCart(cartId: ID!): CartObjectType!
+  placeOrder(placeOrderInput: PlaceOrderInput!): Order!
+  placeInstantOrder(placeInstantOrderInput: PlaceInstantOrderInput!): Order!
+  orderManualComplete(id: ID!): Boolean!
+  refundOrderWithVoucher(id: ID!): Discount!
+  refundOrderPartiallyWithVoucher(
+    id: ID!
+    refundInput: [PartialOrderRefundInput!]!
+  ): Boolean!
+  cancelSubscription(cancelAtPeriodEnd: Boolean = true): Boolean!
+  changingPrices(priceId: ID!): Boolean!
+  changingSubscriptionInterval(interval: PaymentInterval!): Boolean!
+  refundOrder(refundOrderInput: RefundOrderInput!): Order!
+  cancelOrder(orderId: String!): Boolean!
+  validateStripeActivationCode(code: String!): String!
+  disconnectStripeConnect: Boolean!
+  stripeConnectManually(
+    stripeOAuthToken: StripeOAuthToken!
+    accountId: ID!
+  ): Boolean!
+  createStripePaymentIntents(orderId: String!): PaymentIntentResult!
+  createInvoiceStripePaymentIntents(invoiceId: ID!): PaymentIntentResult!
+  clonePaymentMethod(
+    paymentMethodId: String!
+
+    # deprecated: move to accountId
+    organizerId: ID
+    accountId: ID
+  ): String!
+  proceedWithUsingTicket(
+    ticketId: ID!
+    ticketCode: Float!
+  ): ProceedWithUsingTicketStatus!
+  updateTicket(ticketId: ID!, updateTicketInput: TicketUpdateInput!): Ticket!
+  addFeedbackToTicket(addFeedbackInput: AddFeedbackInput!): Boolean!
+  removeFeedbackById(id: ID!): Boolean!
+  scanTicket(scanTicketInput: ScanTicketInput!): TicketScanResult!
+  redeemTicketProduct(ticketCode: ID!, redeemData: RedeemDTO!): Boolean!
+  redeemTicketProducts(
+    ticketCode: ID!
+    redeemData: [RedeemDTO!]!
+  ): [TicketProduct!]!
+  ticketTransferAccept(ticketTransferUuid: String!): Ticket!
+  ticketTransfer(ticketId: Int!): TicketTransfer!
+  ticketTransferMany(ticketIds: [ID!]!): TicketTransfer!
+  ticketTransferManyByPerformanceId(performanceId: ID!): TicketTransfer!
+  addEvent(eventInput: EventInput!): Event!
+
+  # Update an existing Event
+  updateEvent(id: ID!, updateEventInput: EventUpdate!): Event!
+
+  # Update demo mode of the Event
+  updateDemoModeByEventId(eventId: ID!, isDemoMode: Boolean!): Boolean!
+
+  # Update demo mode of the Event
+  updateFeaturedByEventId(eventId: ID!, featuredOrder: Timestamp!): Boolean!
+
+  # check Slug Uniqueness
+  checkSlugUniqueness(eventId: ID!, slug: String!): Boolean!
+  updateEventHiddenAudioIds(id: ID!, eventMovieAudioIds: [ID!]!): Boolean!
+  duplicateEvent(id: ID!): ID!
+
+  # Update Unlimited Capacity of the Event
+  updateUnlimitedCapacityByEventId(
+    eventId: ID!
+    isUnlimitedCapacity: Boolean!
+  ): Boolean!
+
+  # Cancel an existing Event
+  cancelEvent(
+    eventId: ID!
+    comment: String = ""
+    action: String = ""
+    confirmCancellation: Boolean = false
+    voucherAmount: Float
+  ): EventStatusResult!
+
+  # Go back to PUBLISHED status from AWAITING_CANCELLATION
+  stopEventCancellation(eventId: ID!): Boolean!
+  setEventCustomStatus(
+    eventId: ID!
+    status: EventCustomStatus = null
+    sendNotifications: Boolean = false
+  ): Boolean!
+  publishEvent(eventId: ID!, isDemo: Boolean = false): EventStatusResult!
+  updateEventStatus(
+    eventId: ID!
+    status: EventStatuses!
+    comment: String = ""
+  ): EventStatusResult!
+  removeEventById(id: ID!): Boolean!
+  removeMediaByEventId(eventId: ID!): Boolean!
+  attachMovieToEvent(eventId: ID!, movieId: ID!): Boolean!
+  detachMovieFromEvent(eventId: ID!): Boolean!
+  attachMoviePlaylistToEvent(eventId: ID!, moviePlaylistId: ID!): Boolean!
+  detachMoviePlaylistToEvent(eventId: ID!): Boolean!
+  setEventIsPrivate(id: ID!, isPrivate: Boolean!): Boolean!
+  setEventConfigParams(id: ID!, configParams: EventConfigParamsInput!): Boolean!
+  orderEventPosters(id: ID!, items: [OrderedItem!]!): Boolean!
+  generateEventPoster(
+    id: ID!
+    includeCoupon: Boolean = false
+    couponCode: String
+    language: String
+  ): String!
+  regenerateEventPoster(id: ID!): String!
+  updateEventMaxProductsPerOrder(id: ID!, maxProductsPerOrder: Int): Boolean!
+  addProduct(productInput: ProductInput!): Product!
+
+  # Update an existing Product
+  updateProduct(id: ID!, updateProductInput: UpdateProductInput!): Product!
+
+  # Add product to event
+  addProductToEvent(addProductToEventInput: EventProductInput!): Boolean!
+
+  # Activate product to event
+  activateEventProduct(
+    eventId: ID!
+    productId: ID!
+    activated: Boolean!
+  ): Boolean!
+
+  # Update product to event
+  updateProductToEvent(
+    updateProductToEventInput: UpdateEventProductInput!
+  ): Boolean!
+
+  # Remove product from event
+  removeProductFromEvent(productId: ID!, eventId: ID!): Boolean!
+  removeProductById(id: ID!): Boolean!
+  addCouponToEvent(eventId: ID!, couponInput: EventCouponInput!): EventCoupon!
+  importCouponToEvent(
+    eventId: ID!
+    mediaId: ID!
+    couponImportInput: EventCouponImportInput!
+  ): ImportCouponResult!
+  addAutogeneratedCouponsToEvent(
+    eventId: ID!
+    autogenerateInput: EventCouponAutogenerateInput!
+  ): GenerateCouponResult!
+  removeCouponById(id: ID!): Boolean!
+  removeAllCouponsForEvent(eventId: ID!): Int!
+  updateCouponById(
+    id: ID!
+    updateCouponInput: UpdateEventCouponInput!
+  ): Boolean!
+  addPerformances(performanceInput: [PerformanceInput!]!): [Performance!]!
+  updatePerformances(
+    updatePerformanceInput: [UpdatePerformanceInput!]!
+    sendNotifications: Boolean = false
+  ): Boolean!
+  removePerformance(id: ID!): Boolean!
+  addEventPoster(eventPosterInputs: [EventPosterInput!]!): [EventPoster!]!
+  removeEventPoster(mediaId: ID!, eventId: ID!): Boolean!
+  addTicketType(ticketTypeInput: TicketTypeInput!): TicketType!
+  updateTicketTypes(updateTicketTypeInput: [UpdateTicketTypeInput!]!): Boolean!
+  removeTicketType(id: ID!): Boolean!
+  addLicenseToMovie(
+    eventMovieId: ID!
+    licenseMovieInput: EventMovieLicenseInput!
+  ): Boolean!
+  updateMovieLicenseById(
+    id: ID!
+    updateLicenseMovieInput: UpdateEventMovieLicenseInput!
+  ): Boolean!
+  removeMovieLicenseById(id: ID!): Boolean!
+  addMovieToEvent(movieInput: EventMovieInput!): EventMovie!
+  addMovie(movieInput: MovieInput!): EventMovie!
+  removeMovieById(id: ID!): Boolean!
+  updateMovieById(id: ID!, updateMovieInput: UpdateMovieInput!): Boolean!
+  orderMoviePosters(id: ID!, items: [OrderedItem!]!): Boolean!
+  resendToProcessingByMovieId(id: ID!): Boolean!
+  addAudioToMovie(
+    eventMovieId: ID!
+    audioMovieInput: EventMovieAudioInput!
+  ): Boolean!
+  updateMovieAudioById(
+    id: ID!
+    updateAudioMovieInput: UpdateEventMovieAudioInput!
+  ): Boolean!
+  addAudioToEvent(
+    eventId: ID!
+    audioMovieInput: EventMovieAudioInput!
+  ): EventMovieAudio!
+  removeMovieAudioById(id: ID!): Boolean!
+  addSubtitleToMovie(
+    eventMovieId: ID!
+    subtitleMovieInput: EventMovieSubtitleInput!
+  ): Boolean!
+  updateMovieSubtitleById(
+    id: ID!
+    updateSubtitleMovieInput: UpdateEventMovieSubtitleInput!
+  ): Boolean!
+  addSubtitleToEvent(
+    eventId: ID!
+    subtitleMovieInput: EventMovieSubtitleInput!
+  ): EventMovieSubtitle!
+  removeMovieSubtitleById(id: ID!): Boolean!
+  addMoviePoster(
+    eventMoviePosterInputs: [EventMoviePosterInput!]!
+  ): [EventMoviePoster!]!
+  removeMoviePoster(mediaId: ID!, movieId: ID!): Boolean!
+  generateInvoiceByEventId(id: ID!): Invoice!
+  updateInvoiceStatus(invoiceId: ID!, status: InvoiceStatuses!): Invoice!
+  updateEventFee(eventId: ID!, fee: EventFeeInput!): Boolean!
+  createCustomMovieRating(input: CustomMovieRatingInput!): CustomMovieRating!
+  updateByIdCustomMovieRating(id: ID!, input: CustomMovieRatingInput!): Boolean!
+  removeByIdCustomMovieRating(id: ID!): Boolean!
+  addEventMoviePlaylistItem(
+    addEventMoviePlaylistItemInputs: EventMoviePlaylistItemInput!
+  ): EventMoviePlaylistItem!
+  updateEventMoviePlaylistItem(
+    eventMoviePlaylistItemId: ID!
+    updateEventMoviePlaylistItem: EventMoviePlaylistItemUpdate!
+  ): EventMoviePlaylistItem!
+  removeEventMoviePlaylistItem(eventMoviePlaylistItemId: ID!): Boolean!
+  addEventMoviePlaylist(
+    addEventMoviePlaylistInputs: EventMoviePlaylistInput!
+  ): EventMoviePlaylist!
+  removeEventMoviePlaylist(eventMoviePlaylistId: ID!): Boolean!
+  createCustomMovieCategory(
+    input: CustomMovieCategoryInput!
+  ): CustomMovieCategory!
+  updateByIdCustomMovieCategory(
+    id: ID!
+    input: CustomMovieCategoryInput!
+  ): Boolean!
+  removeByIdCustomMovieCategory(id: ID!): Boolean!
+  onAnalyticSync(analyticEventSyncInput: AnalyticEventSyncInput!): Boolean!
+  manualJoinTicket(payload: ManualJoinTicketPayload!): Boolean!
+  cloudMessageDeviceRegister(
+    deviceRegisterInput: DeviceRegisterInput!
+  ): Boolean!
+  cloudMessageDeviceRemove(deviceRegisterInput: DeviceRegisterInput!): Boolean!
+  cloudMessageTestMessage: Boolean!
+  sendCustomNotification(notificationInput: CustomNotificationInput!): Boolean!
+  sendCustomEventNotification(
+    notificationInput: CustomEventNotificationInput!
+  ): Boolean!
+  createEventHolderFee(input: EventHolderFeeInput!): EventHolderFee!
+  updateByIdEventHolderFee(id: ID!, input: EventHolderFeeInput!): Boolean!
+  removeByIdEventHolderFee(id: ID!): Boolean!
+  createDiscount(input: DiscountInput!): Discount!
+  updateByIdDiscount(id: ID!, input: DiscountInput!): Boolean!
+  removeByIdDiscount(id: ID!): Boolean!
+  addVenue(venueInput: VenueInput!, assignToEvent: ID): Venue!
+  updateVenues(updateVenueInput: [UpdateVenueInput!]!): [Venue!]!
+  updateVenue(updateVenueInput: UpdateVenueInput!): Venue!
+  removeVenueById(id: ID!): Boolean!
+  addAccessCode(eventId: ID!, accessCodeInput: AccessCodeInput!): AccessCode!
+  updateAccessCodeById(
+    id: ID!
+    accessCodeInput: UpdateAccessCodeInput!
+  ): Boolean!
+  removeAccessCode(id: ID!): Boolean!
+  sendAccessCodeToRecipient(
+    id: ID!
+    recipient: AccessCodeSentToRecipientInput!
+  ): Boolean!
+  prepareTicketsDelivery(
+    placeInstantOrderInput: PlaceInstantOrderInput!
+  ): [TicketTransfer!]!
+  removeLicenseRequestById(id: ID!): Boolean!
+  updateLicenseRequest(
+    id: ID!
+    updateLicenseRequestInput: UpdateLicenseRequestInput!
+  ): LicenseRequest!
+  createLicenseRequest(
+    licenseRequestInput: LicenseRequestInput!
+  ): LicenseRequest!
+  updateLicenseRequestStatus(id: ID!, status: LicenseRequestStatus!): Boolean!
+  generateLicenseRequestDoc(id: ID!): String!
+  sentLicenseRequestToLicenseProvider(
+    id: ID!
+    sendMailToLicenseProviderInput: SendMailToLicenseProviderInput!
+  ): Boolean!
+  removeLicenseRequestMovie(id: ID!): Boolean!
+  updateLicenseRequestMovie(
+    id: ID!
+    updateLicenseRequestMovieInput: UpdateLicenseRequestMovieInput!
+  ): LicenseRequestMovie!
+  createLicenseRequestMovie(
+    licenseRequestMovieInput: LicenseRequestMovieInput!
+  ): LicenseRequestMovie!
+  updateLicenseRequestMovieStatus(
+    id: ID!
+    status: LicenseRequestMovieStatus!
+  ): Boolean!
+}
+
+input ContactUsInput {
+  name: String!
+  email: String!
+  phone: String
+  message: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+  rememberMe: Boolean = false
+}
+
+input LoginAccessCodeInput {
+  code: String!
+  application: CinewavApplication!
+  rememberMe: Boolean = false
+}
+
+input SignUpInput {
+  email: String!
+  password: String!
+  companyName: String
+  firstName: String!
+  lastName: String!
+  middleName: String
+  phone: String
+  photo: String
+  address: String
+  address2: String
+  zipcode: String
+  state: String
+  countryKey: CountryCode = SG
+  defaultCurrencyKey: CurrencyCode = SGD
+  city: String
+  gender: Gender = NOT_SPECIFIED
+  birthday: Timestamp
+  emailNotifications: Boolean = true
+  socialMetadata: SocialMetadataInput
+}
+
+input SocialMetadataInput {
+  instagram: String
+  facebook: String
+}
+
+input SingUpOrganizerInputs {
+  email: String!
+  password: String!
+  companyName: String
+  firstName: String!
+  lastName: String!
+  middleName: String
+  phone: String!
+  photo: String
+  address: String
+  address2: String
+  zipcode: String
+  state: String
+  countryKey: CountryCode = SG
+  defaultCurrencyKey: CurrencyCode = SGD
+  city: String
+  gender: Gender = NOT_SPECIFIED
+  birthday: Timestamp
+  emailNotifications: Boolean = true
+  socialMetadata: SocialMetadataInput
+}
+
+input SocialLoginInput {
+  accessToken: String!
+  provider: Provider!
+  application: CinewavApplication
+  firstName: String
+  lastName: String
+}
+
+# All possible social providers
+enum Provider {
+  GOOGLE
+  GOOGLE_OAUTH2
+  GOOGLE_JWT_CREDENTIAL
+  FACEBOOK
+  APPLE
+}
+
+input UserInput {
+  email: String!
+  password: String!
+  companyName: String
+  firstName: String
+  lastName: String
+  middleName: String
+  phone: String
+  photo: String
+  address: String
+  address2: String
+  zipcode: String
+  state: String
+  countryKey: CountryCode
+  defaultCurrencyKey: CurrencyCode = SGD
+  city: String
+  gender: String
+  birthday: Timestamp
+  emailNotifications: Boolean = true
+  activated: Boolean = false
+  disabled: Boolean = false
+  trusted: Boolean = false
+  bankAccountInfo: BankAccountInfoInput
+  socialMetadata: SocialMetadataInput
+  facebook: String
+  instagram: String
+  note: String
+  referredBy: String
+}
+
+input BankAccountInfoInput {
+  accountName: String
+  bankName: String
+  SWIFTBICCode: String
+  bankCode: String
+  branchCode: String
+  accountNumber: String
+}
+
+input UserRoleInput {
+  userId: ID!
+  roles: [UserRoles!]!
+}
+
+input UpdateUserInputs {
+  email: String
+  password: String
+  companyName: String
+  firstName: String
+  lastName: String
+  middleName: String
+  phone: String
+  photo: String
+  address: String
+  address2: String
+  zipcode: String
+  state: String
+  countryKey: CountryCode
+  language: LanguageCode
+  defaultCurrencyKey: CurrencyCode = SGD
+  city: String
+  gender: Gender
+  birthday: Timestamp
+  emailNotifications: Boolean
+  trusted: Boolean
+  disabled: Boolean
+  activated: Boolean
+  packageId: Float
+  socialMetadata: SocialMetadataInput
+  bankAccountInfo: BankAccountInfoInput
+  note: String
+  referredBy: String
+}
+
+input UpdateCurrentUserInputs {
+  firstName: String
+  companyName: String
+  lastName: String
+  middleName: String
+  phone: String
+  photo: String
+  address: String
+  address2: String
+  zipcode: String
+  state: String
+  countryKey: CountryCode
+  language: LanguageCode
+  defaultCurrencyKey: CurrencyCode = SGD
+  city: String
+  gender: Gender = NOT_SPECIFIED
+  birthday: Timestamp
+  emailNotifications: Boolean = true
+  socialMetadata: SocialMetadataInput
+  bankAccountInfo: BankAccountInfoInput
+  invoiceCompanyName: String
+  invoiceStreetAddress: String
+  invoiceCity: String
+  invoiceState: String
+  invoiceZipcode: String
+  invoiceCountryKey: CountryCode
+  futureEventsNotificationMode: NotificationMode
+  futureEventsNotificationCountryCodes: [String!]
+  futureEventsNotificationCategoryIds: [Int!]
+  futureEventsNotificationFrequency: NotificationFrequency
+}
+
+input AddTeamMemberInputDto {
+  email: String!
+  roles: [ID!]!
+}
+
+input UpdateTeamMemberInputDto {
+  userId: ID!
+  roles: [ID!]!
+}
+
+input CreateAccountInputs {
+  title: String!
+  currencyKey: CurrencyCode
+  defaultTimeZone: String
+  invoiceCompanyName: String
+  invoiceStreetAddress: String
+  invoiceCity: String
+  invoiceState: String
+  invoiceZipcode: String
+  invoiceCountryKey: CountryCode
+}
+
+input UpdateAccountInputs {
+  title: String
+  currencyKey: CurrencyCode
+  defaultTimeZone: String
+  invoiceCompanyName: String
+  invoiceStreetAddress: String
+  invoiceCity: String
+  invoiceState: String
+  invoiceZipcode: String
+  invoiceCountryKey: CountryCode
+}
+
+input AddToCardInput {
+  cartId: String!
+  cartItems: [CartItemInput!]!
+}
+
+input CartItemInput {
+  ticketData: TicketData!
+  quantity: Int!
+  productsData: [ProductData!]
+}
+
+input TicketData {
+  performanceId: ID!
+  ticketTypeId: ID!
+  eventId: ID!
+  couponCode: String
+  discountCode: String
+}
+
+input ProductData {
+  productId: ID!
+  quantity: Int!
+}
+
+input PlaceOrderInput {
+  cartId: String!
+  attendee: AttendeeInput
+  clearCart: Boolean = false
+}
+
+input AttendeeInput {
+  countryKey: CountryCode
+  city: String
+  state: String
+  zipCode: String
+  address: String
+  address2: String
+  email: String
+  phone: String
+  firstName: String
+  lastName: String
+  middleName: String
+}
+
+input PlaceInstantOrderInput {
+  cartItems: [CartItemInput!]!
+  attendee: AttendeeInput
+  paymentProvider: PaymentProvider
+}
+
+input PartialOrderRefundInput {
+  ticketId: ID!
+  refundTicket: Boolean
+  productIds: [ID!]
+}
+
+input RefundOrderInput {
+  orderId: String!
+  reason: RefundReasonEnum
+}
+
+enum RefundReasonEnum {
+  DUPLICATE
+  FRAUDULENT
+  REQUESTED_BY_CUSTOMER
+}
+
+input StripeOAuthToken {
+  accessToken: String!
+  livemode: Boolean!
+  refreshToken: String!
+  tokenType: String!
+  stripePublishableKey: String!
+  stripeUserId: String!
+  scope: String!
+}
+
+input TicketUpdateInput {
+  isRTCEnabled: Boolean!
+}
+
+input AddFeedbackInput {
+  ticketCode: String!
+  comment: String
+  rating: Float!
+  ratingSync: Int!
+  deviceInfoMetadata: DeviceInfoMetadataInput
+}
+
+input DeviceInfoMetadataInput {
+  device: String
+  manufacturerName: String
+  board: String
+  hardware: String
+  serialNo: String
+  os: String
+  osVersion: String
+  osFingerPrint: String
+}
+
+input ScanTicketInput {
+  ticketCode: ID!
+  scanType: TicketScanType!
+  performanceId: ID!
+}
+
+input RedeemDTO {
+  ticketProductId: ID!
+  redeemCount: Int = 1
+}
+
+input EventInput {
+  title: String!
+  dressCode: String
+  categoryId: Int
+  poster: String
+  ageRestrictions: AgeRestriction
+  videoLinks: [VideoLinkInput!] = []
+  eventMovieMetadata: EventMovieMetadataInput
+  configParams: EventConfigParamsInput
+  slug: String
+  feesIncludedInTicketPrice: Boolean = false
+  addTitleToPoster: Boolean = false
+  currencyKey: CurrencyCode
+  capacity: Int
+  description: String!
+  isPrivate: Boolean = false
+  isNonAudioSynced: Boolean
+  rating: MovieRating
+  customRatingId: Int
+  isDemoMode: Boolean = false
+  linkUrl: String
+  linkDescription: String
+  venueId: Int
+  contactMetadata: ContactMetadataInput
+  congratsMetadata: CongratsMetadataInput
+  maxProductsPerOrder: Int
+  hiddenAudioIds: [ID!]
+}
+
+input VideoLinkInput {
+  title: String
+  link: String!
+  order: Int = 0
+}
+
+input EventMovieMetadataInput {
+  year: Int
+  directors: String
+  writers: String
+  actors: String
+}
+
+input EventConfigParamsInput {
+  autoPause: Boolean
+}
+
+input ContactMetadataInput {
+  instagram: String
+  facebook: String
+  phone: String
+  email: String
+}
+
+input CongratsMetadataInput {
+  subject: String
+  body: String
+}
+
+input EventUpdate {
+  title: String
+  dressCode: String
+  categoryId: Int
+  poster: String
+  ageRestrictions: AgeRestriction
+  videoLinks: [VideoLinkInput!] = []
+  eventMovieMetadata: EventMovieMetadataInput
+  configParams: EventConfigParamsInput
+  slug: String
+  feesIncludedInTicketPrice: Boolean = false
+  addTitleToPoster: Boolean = false
+  currencyKey: CurrencyCode
+  capacity: Int
+  description: String
+  isPrivate: Boolean = false
+  isNonAudioSynced: Boolean
+  rating: MovieRating
+  customRatingId: Int
+  isDemoMode: Boolean = false
+  linkUrl: String
+  linkDescription: String
+  venueId: Int
+  contactMetadata: ContactMetadataInput
+  congratsMetadata: CongratsMetadataInput
+  maxProductsPerOrder: Int
+  hiddenAudioIds: [ID!]
+}
+
+input EventCustomStatus {
+  text: String!
+  color: EventCustomStatusColor!
+}
+
+input OrderedItem {
+  id: Int!
+  order: Int!
+}
+
+input ProductInput {
+  title: String!
+  imageMediaId: ID
+  price: Float!
+  description: String
+}
+
+input UpdateProductInput {
+  title: String!
+  imageMediaId: ID
+  price: Float!
+  description: String
+}
+
+input EventProductInput {
+  eventId: ID!
+  productId: ID!
+  quantity: Int
+  maxPerOrder: Int
+  maxPerTicket: Int
+  published: Boolean
+  inventoryManagement: Boolean = false
+  salesStart: Timestamp
+  salesEnd: Timestamp
+}
+
+input UpdateEventProductInput {
+  eventId: ID!
+  productId: ID!
+  quantity: Int
+  maxPerOrder: Int
+  maxPerTicket: Int
+  published: Boolean
+  inventoryManagement: Boolean = false
+  salesStart: Timestamp
+  salesEnd: Timestamp
+}
+
+input EventCouponInput {
+  quantity: Int!
+  validFrom: Timestamp
+  validTo: Timestamp
+  ticketTypeIds: [ID!]
+  code: ID!
+}
+
+input EventCouponImportInput {
+  quantity: Int = 1
+  validFrom: Timestamp
+  validTo: Timestamp
+  ticketTypeIds: [ID!]
+}
+
+input EventCouponAutogenerateInput {
+  quantity: Int!
+  validFrom: Timestamp
+  validTo: Timestamp
+  ticketTypeIds: [ID!]
+  generateQuantity: Int!
+  prefix: String
+  suffix: String
+  type: EventCouponAutogenerateType!
+}
+
+# Algorithm used for autogenerating coupon codes
+enum EventCouponAutogenerateType {
+  ALPHABETIC
+  ALPHANUMERIC
+  NUMERIC
+}
+
+input UpdateEventCouponInput {
+  code: ID
+  title: String
+  quantity: Float
+  validFrom: Timestamp
+  validTo: Timestamp
+  ticketTypeIds: [ID!]
+}
+
+input PerformanceInput {
+  startDate: Timestamp!
+  endDate: Timestamp!
+  timezone: String!
+  eventId: Int!
+  title: String
+  workflowStatus: PerformanceWorkflowStatuses = ACTIVE
+}
+
+input UpdatePerformanceInput {
+  id: ID!
+  startDate: Timestamp
+  endDate: Timestamp
+  timezone: String
+  title: String
+  workflowStatus: PerformanceWorkflowStatuses = ACTIVE
+}
+
+input EventPosterInput {
+  eventId: ID!
+  mediaId: ID!
+  order: Float = 0
+}
+
+input TicketTypeInput {
+  title: String!
+  eventId: ID!
+  description: String
+  allowPreprint: Boolean = true
+  assignToAllPerformance: Boolean = true
+  isHidden: Boolean = false
+  price: Float!
+  totalQuantity: Int!
+  minPerOrder: Int
+  maxPerOrder: Int
+  minSpendSumPerOrder: Float
+  minSpendSumPerTicket: Float
+  sorting: Int
+  isExpirationEnabled: Boolean = false
+  expirationTimeHours: Int
+  salesStart: Timestamp!
+  salesEnd: Timestamp
+  ticketTypePerformances: [TicketTypePerformanceInput!]
+}
+
+input TicketTypePerformanceInput {
+  price: Float
+  totalQuantity: Int
+  minPerOrder: Int
+  maxPerOrder: Int
+  performanceId: Int!
+}
+
+input UpdateTicketTypeInput {
+  id: ID!
+  title: String
+  eventId: ID!
+  description: String
+  allowPreprint: Boolean
+  assignToAllPerformance: Boolean = true
+  isHidden: Boolean
+  price: Float
+  totalQuantity: Int
+  minPerOrder: Int
+  maxPerOrder: Int
+  minSpendSumPerOrder: Float
+  minSpendSumPerTicket: Float
+  sorting: Int = 0
+  isExpirationEnabled: Boolean = false
+  expirationTimeHours: Int
+  salesStart: Timestamp
+  salesEnd: Timestamp
+  ticketTypePerformances: [TicketTypePerformanceInput!]
+}
+
+input EventMovieLicenseInput {
+  note: String
+  countries: [CountryCode!]
+  startDate: Timestamp
+  endDate: Timestamp
+}
+
+input UpdateEventMovieLicenseInput {
+  movieId: ID!
+  note: String
+  countries: [CountryCode!]
+  startDate: Timestamp
+  endDate: Timestamp
+}
+
+input EventMovieInput {
+  eventId: ID!
+  videoMediaId: ID
+  audioMedias: [EventMovieAudioInput!] = []
+  title: String
+  description: String
+  published: Boolean
+  chapterTimecodes: [ChapterTimecodeInput!] = []
+}
+
+input EventMovieAudioInput {
+  mediaId: ID!
+  title: String
+  ticketTypeIds: [ID!] = []
+  language: LanguageCode = EN
+  original: Boolean = false
+}
+
+input ChapterTimecodeInput {
+  title: String!
+  timecode: Int!
+  imageLocation: String
+  imageSizes: ImageSizeSetInput
+  mediaId: ID
+}
+
+input ImageSizeSetInput {
+  high: ImageSizeInput
+  medium: ImageSizeInput
+  small: ImageSizeInput
+  thumbnailSmall: ImageSizeInput
+  thumbnailMedium: ImageSizeInput
+  thumbnailHigh: ImageSizeInput
+}
+
+input ImageSizeInput {
+  size: Int!
+  alias: String!
+  location: String!
+  keyId: String!
+}
+
+input MovieInput {
+  videoMediaId: ID
+  audioMedias: [MovieAudioInput!] = []
+  subtitleMedias: [EventMovieSubtitleInput!] = []
+  title: String!
+  description: String
+  videoLinks: [VideoLinkInput!] = []
+  published: Boolean = true
+  isWithoutVideo: Boolean = false
+  rating: MovieRating!
+  customRatingId: ID
+  customCategoryId: ID
+  packageIds: [ID!]
+  chapterTimecodes: [ChapterTimecodeInput!] = []
+}
+
+input MovieAudioInput {
+  mediaId: ID!
+  title: String!
+}
+
+input EventMovieSubtitleInput {
+  mediaId: ID!
+  title: String
+}
+
+input UpdateMovieInput {
+  imageMediaId: ID
+  videoMediaId: ID
+  title: String
+  description: String
+  videoLinks: [VideoLinkInput!] = []
+  published: Boolean
+  rating: MovieRating!
+  isWithoutVideo: Boolean = false
+  customRatingId: ID
+  customCategoryId: ID
+  packageIds: [ID!]
+  chapterTimecodes: [ChapterTimecodeInput!] = []
+}
+
+input UpdateEventMovieAudioInput {
+  mediaId: ID
+  title: String
+  ticketTypeIds: [ID!] = []
+  language: LanguageCode = EN
+  original: Boolean = false
+}
+
+input UpdateEventMovieSubtitleInput {
+  mediaId: ID
+  title: String
+}
+
+input EventMoviePosterInput {
+  movieId: ID!
+  mediaId: ID!
+  order: Float = 0
+}
+
+input EventFeeInput {
+  perTicketPercent: Float = 0
+  perFreeTicket: Float = 0
+  productFee: Float = 0
+  minimumGuaranteeFee: Float = 0
+  minimumGuaranteeAttendeesThreshold: Float = 0
+  licenseFeePercent: Float = 0
+  licenseFee: Float = 0
+  perTicket: Float
+  fee: Float
+  setupFee: Float
+}
+
+input CustomMovieRatingInput {
+  description: String!
+  imageId: Int
+}
+
+input EventMoviePlaylistItemInput {
+  eventMovieId: ID!
+  eventMoviePlaylistId: ID!
+  priority: Int = 0
+  order: Int = 0
+}
+
+input EventMoviePlaylistItemUpdate {
+  priority: Int = 0
+  order: Int = 0
+}
+
+input EventMoviePlaylistInput {
+  title: String
+  description: String
+}
+
+input CustomMovieCategoryInput {
+  description: String!
+  imageId: Int
+}
+
+input AnalyticEventSyncInput {
+  sessionId: ID!
+  delta: Float!
+  position: Float!
+  operation: SyncOperation!
+  state: SyncState!
+  performanceId: ID!
+  time: Timestamp!
+}
+
+enum SyncOperation {
+  Play
+  Stop
+  Seeked
+  Seeking
+  Heartbeat
+}
+
+enum SyncState {
+  Playing
+  Stopped
+}
+
+input ManualJoinTicketPayload {
+  performanceId: ID!
+  ticketTypeId: ID!
+  userId: ID!
+  organizerId: ID!
+  ticketId: ID!
+  isFree: Boolean!
+}
+
+input DeviceRegisterInput {
+  token: String!
+  provider: MessageProvider!
+  devicePlatform: DevicePlatform!
+}
+
+enum MessageProvider {
+  FIREBASE
+  HMS
+}
+
+enum DevicePlatform {
+  IOS
+  ANDROID
+}
+
+input CustomNotificationInput {
+  title: String!
+  content: String!
+  countryCode: String
+  eventId: ID
+  performanceId: ID
+}
+
+input CustomEventNotificationInput {
+  title: String!
+  content: String!
+  eventId: ID!
+  performanceId: ID!
+}
+
+input EventHolderFeeInput {
+  userId: Int!
+  currency: CurrencyCode!
+  minimumGuarantee: Float!
+  freeTicketFee: Float!
+  productFee: Float!
+  paidTicketPercentage: Float!
+  paidTicketMinimumFee: Float!
+}
+
+input DiscountInput {
+  code: String!
+  currency: CurrencyCode
+  maxUsages: Float
+  validFrom: Timestamp
+  validTo: Timestamp
+  discountInPercent: Boolean!
+  discountAmount: Float!
+  discountMax: Float
+  forEventId: ID
+}
+
+input VenueInput {
+  title: String!
+  countryKey: CountryCode!
+  address: String
+  address2: String
+  city: String
+  state: String
+  zipcode: String
+  latitude: Float
+  longitude: Float
+  googleLink: String
+  capacity: Int
+}
+
+input UpdateVenueInput {
+  id: ID!
+  title: String!
+  countryKey: CountryCode
+  address: String
+  address2: String
+  city: String
+  state: String
+  zipcode: String
+  latitude: Float
+  longitude: Float
+  googleLink: String
+  capacity: Int
+}
+
+input AccessCodeInput {
+  code: ID!
+  performances: [ID!]
+  assignToAllPerformance: Boolean = true
+  applications: [CinewavApplication!]!
+}
+
+input UpdateAccessCodeInput {
+  code: ID!
+  performances: [ID!]
+  assignToAllPerformance: Boolean = true
+  applications: [CinewavApplication!]!
+}
+
+input AccessCodeSentToRecipientInput {
+  emails: [String!]!
+}
+
+input UpdateLicenseRequestInput {
+  venueText: String!
+  maxAudienceSize: Float!
+  existingCustomer: Boolean!
+  customerName: String!
+  organizationName: String!
+  customerPhone: String!
+  customerEmail: String!
+  fullInvoiceAddress: String!
+  countryKey: CountryCode!
+  screenSize: String!
+  ticketPrice: String!
+  chargingAdmissionFee: Boolean!
+  planRunEntireFilm: Boolean!
+  involveAudienceParticipation: Boolean!
+  involveLivePerformance: Boolean!
+  involveThemedElements: Boolean!
+  involveAnySpecialEffects: Boolean!
+  screeningSummary: String
+  advertisingScreenDetails: String
+  advertisingScreen: Boolean!
+  otherThirdPartyPromotion: Boolean!
+  organizationResponsibleCommunication: String
+  thirdPartyPromotionOrganizations: String
+  tittle: String!
+}
+
+input LicenseRequestInput {
+  venueText: String!
+  maxAudienceSize: Float!
+  existingCustomer: Boolean!
+  customerName: String!
+  organizationName: String!
+  customerPhone: String!
+  customerEmail: String!
+  fullInvoiceAddress: String!
+  countryKey: CountryCode!
+  screenSize: String!
+  ticketPrice: String!
+  chargingAdmissionFee: Boolean!
+  planRunEntireFilm: Boolean!
+  involveAudienceParticipation: Boolean!
+  involveLivePerformance: Boolean!
+  involveThemedElements: Boolean!
+  involveAnySpecialEffects: Boolean!
+  screeningSummary: String
+  advertisingScreenDetails: String
+  advertisingScreen: Boolean!
+  otherThirdPartyPromotion: Boolean!
+  organizationResponsibleCommunication: String
+  thirdPartyPromotionOrganizations: String
+  tittle: String!
+}
+
+input SendMailToLicenseProviderInput {
+  from: String!
+  to: String!
+  subject: String!
+  cc: String!
+  text: String!
+}
+
+input UpdateLicenseRequestMovieInput {
+  numberOfScreenings: Float!
+  movieTittle: String!
+  screeningDates: String!
+  format: String!
+}
+
+input LicenseRequestMovieInput {
+  licenseRequestId: ID
+  numberOfScreenings: Float!
+  movieTittle: String!
+  screeningDates: String!
+  format: String!
+}
